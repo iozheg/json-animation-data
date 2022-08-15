@@ -65,6 +65,7 @@ function save() {
   .frame-controls {
     display: flex;
     flex-wrap: wrap;
+    justify-content: space-between;
     margin-bottom: 10px;
     margin-top: 6px;
     background-color: #333333;

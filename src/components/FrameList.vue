@@ -48,7 +48,7 @@ function deleteFrame(index: number) {
 <template>
   <div class="frame-list">
     Frame list:
-    <div v-for="(frame, index) in frames">
+    <div v-for="(frame, index) in frames" class="frame-items">
       <FrameItem
         :frame="frame"
         @select-frame="selectFrame(index)"
@@ -69,5 +69,9 @@ function deleteFrame(index: number) {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
+  }
+
+  .frame-list .frame-items {
+    width: 100%;
   }
 </style>

@@ -24,9 +24,11 @@ const emit = defineEmits<{
 <style scoped>
 .frame-item {
   display: flex;
+  width: 100%;
 }
 
 .frame-item .frame-item__name {
+  flex-grow: 1;
   width: 150px;
 }
 
