@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import { reactive, watch } from "vue";
-import type { IFrameControls } from "@/types";
+import { reactive } from "vue";
+import type { IFramesForm } from "@/types";
 import InputControl from "./InputControl.vue";
+import CreateFramesForm from "./CreateFramesForm.vue";
 
 interface IState {
   imageLoaded: boolean;
   showFrameControls: boolean;
-  frameControls: IFrameControls;
 }
 
 defineProps<{
@@ -15,40 +15,16 @@ defineProps<{
 
 const emit = defineEmits<{
   (e: "imageLoaded", image: HTMLImageElement): void,
-  (e: "updateScale", scale: number, controls: IFrameControls): void,
+  (e: "updateScale", scale: number): void,
   (e: "showCreateFrames", state: boolean): void,
-  (e: "dataUpdated", controls: IFrameControls): void,
+  (e: "updateFramesForm", controls: IFramesForm): void,
   (e: "addFrames"): void,
 }>();
 
 const state: IState = reactive({
   imageLoaded: false,
   showFrameControls: false,
-  frameControls: {
-    amount: 1,
-    startOffset: {
-      x: 0,
-      y: 0,
-    },
-    spaceBetween: {
-      x: 0,
-      y: 0,
-    },
-    frameSize: {
-      width: 16,
-      height: 16,
-    },
-    frameName: "frame",
-  },
 });
-
-watch(
-  () => state.frameControls,
-  (controls: IFrameControls) => {
-    emit("dataUpdated", controls);
-  },
-  { deep: true },
-);
 
 function loadSpritesheet(event: Event) {
   const file = (event.target as HTMLInputElement).files?.[0];
@@ -65,13 +41,16 @@ function loadSpritesheet(event: Event) {
 }
 
 function updateScale(scale: number) {
-  emit("updateScale", Number(scale), state.frameControls);
+  emit("updateScale", Number(scale));
 }
 
 function createFrames() {
   state.showFrameControls = true;
   emit("showCreateFrames", true);
-  emit("dataUpdated", state.frameControls);
+}
+
+function updateFramesForm(form: IFramesForm) {
+  emit("updateFramesForm", form);
 }
 
 function addFrames() {
@@ -98,55 +77,14 @@ function cancel() {
     <button
       v-if="state.imageLoaded && !state.showFrameControls"
       class="btn"
-      @click="createFrames">Create frames</button>
-    <div v-if="state.showFrameControls" class="frame-controls">
-      <InputControl
-        v-model="state.frameControls.frameName"
-        label="Name:"
-      />
-      <InputControl
-        v-model.number="state.frameControls.amount"
-        label="Amount:"
-        type="number"
-      />
-      <InputControl
-        v-model.number="state.frameControls.startOffset.x"
-        label="Start X offset:"
-        type="number"
-      />
-      <InputControl
-        v-model.number="state.frameControls.startOffset.y"
-        label="Start Y offset:"
-        type="number"
-      />
-      <InputControl
-        v-model.number="state.frameControls.spaceBetween.x"
-        label="Horizontal padding:"
-        type="number"
-      />
-      <InputControl
-        v-model.number="state.frameControls.spaceBetween.y"
-        label="Vertical padding:"
-        type="number"
-      />
-      <InputControl
-        v-model.number="state.frameControls.frameSize.width"
-        label="Frame width:"
-        type="number"
-      />
-      <InputControl
-        v-model.number="state.frameControls.frameSize.height"
-        label="Frame height:"
-        type="number"
-      />
-      <div class="flex-break"></div>
-      <button
-        class="btn"
-        @click="addFrames">Add</button>
-      <button
-        class="btn"
-        @click="cancel">Cancel</button>
-    </div>
+      @click="createFrames"
+    >Create frames</button>
+    <CreateFramesForm
+      v-if="state.showFrameControls"
+      @update-form="updateFramesForm"
+      @add-frames="addFrames"
+      @cancel="cancel"
+    />
   </div>
 </template>
 
@@ -160,10 +98,5 @@ function cancel() {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-  }
-
-  .controls .frame-controls {
-    display: flex;
-    flex-wrap: wrap;
   }
 </style>

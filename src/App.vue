@@ -4,12 +4,13 @@ import Controls from "./components/Controls.vue"
 import WorkZone from "./components/WorkZone.vue"
 import FrameCanvas from "./components/FrameCanvas.vue";
 import FrameList from "./components/FrameList.vue";
-import type { IFrameControls, IFrameOptions } from "./types";
+import type { IFramesForm, IFrameOptions } from "./types";
 
 interface IState {
   image: HTMLImageElement | null;
   scale: number;
   showCreateFrames: boolean;
+  framesForm: IFramesForm | null;
   currentFrames: IFrameOptions[];
   frames: IFrameOptions[];
 }
@@ -18,6 +19,7 @@ const state = reactive<IState>({
   image: null,
   scale: 2,
   showCreateFrames: false,
+  framesForm: null,
   currentFrames: [],
   frames: [],
 });
@@ -29,11 +31,12 @@ const size = computed(() => {
   }
 });
 
-function dataUpdate(controls: IFrameControls) {
+function updateData(form: IFramesForm) {
+  state.framesForm = form;
   const frames: IFrameOptions[] = [];
 
   if (state.image) {
-    const { amount, startOffset, spaceBetween, frameSize, frameName } = controls;
+    const { amount, startOffset, spaceBetween, frameSize, frameName } = form;
     const framesInRow = Math.floor(state.image?.width / (frameSize.width + spaceBetween.x));
     const rows = Math.ceil(amount / framesInRow);
     for(let r = 0; r < rows; r++) {
@@ -43,7 +46,7 @@ function dataUpdate(controls: IFrameControls) {
           y: (r * (frameSize.height + spaceBetween.y) + startOffset.y + r) * state.scale,
           width: frameSize.width * state.scale,
           height: frameSize.height * state.scale,
-          name: `frameName_${r * framesInRow + i}`,
+          name: `${frameName}_${r * framesInRow + i}`,
         }
         frames.push(frame);
       }
@@ -53,9 +56,11 @@ function dataUpdate(controls: IFrameControls) {
   }
 }
 
-function updateScale(scale: number, controls: IFrameControls) {
+function updateScale(scale: number) {
   state.scale = scale;
-  dataUpdate(controls);
+  if (state.framesForm) {
+    updateData(state.framesForm);
+  }
 }
 
 function addFrames() {
@@ -81,7 +86,7 @@ function selectFrame(index: number) {
       @image-loaded="(img) => state.image = img"
       @update-scale="updateScale"
       @show-create-frames="(status) => state.showCreateFrames = status"
-      @data-updated="dataUpdate"
+      @update-frames-form="updateData"
       @add-frames="addFrames"
     />
     <FrameList

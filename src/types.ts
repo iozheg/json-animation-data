@@ -1,4 +1,4 @@
-export interface IFrameControls {
+export interface IFramesForm {
   amount: number;
   startOffset: {
     x: number;
