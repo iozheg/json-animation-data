@@ -75,6 +75,7 @@ function selectAnimationFrames(frameIndexes: number[]) {
 
 function addAnimation(name: string, frameIndexes: number[]) {
   emit("addAnimation", name, frameIndexes);
+  emit("showControlView", ControlView.NONE);
 }
 </script>
 

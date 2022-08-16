@@ -4,6 +4,7 @@ import Controls from "./components/Controls.vue"
 import WorkZone from "./components/WorkZone.vue"
 import FrameCanvas from "./components/FrameCanvas.vue";
 import FrameList from "./components/FrameList.vue";
+import AnimationList from "./components/AnimationList.vue";
 import type { IFramesForm, IFrameOptions, IAnimation } from "./types";
 import { ControlView } from "./enums";
 
@@ -29,8 +30,8 @@ const state = reactive<IState>({
 
 const size = computed(() => {
   return {
-    width: state.image?.width * state.scale,
-    height: state.image?.height * state.scale,
+    width: (state.image?.width || 0) * state.scale,
+    height: (state.image?.height || 0) * state.scale,
   }
 });
 
@@ -83,6 +84,10 @@ function selectFrames(indexes: number[]) {
 function addAnimation(name: string, frameIndexes: number[]) {
   state.animations.push({ name, frameIndexes });
 }
+
+function updateAnimations(animations: IAnimation[]) {
+  state.animations = animations;
+}
 </script>
 
 <template>
@@ -104,6 +109,13 @@ function addAnimation(name: string, frameIndexes: number[]) {
       :frames="state.frames"
       @update-frame-list="updateFrames"
       @select-frames="selectFrames"
+    />
+    <AnimationList
+      v-if="state.animations.length && state.controlView === ControlView.NONE"
+      :animations="state.animations"
+      :frames="state.frames"
+      @update-animation-list="updateAnimations"
+      @select-animation="selectFrames"
     />
   </div>
   <div v-if="state.image">
