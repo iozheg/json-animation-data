@@ -22,3 +22,8 @@ export interface IFrameOptions {
   height: number;
   name: string;
 }
+
+export interface IAnimation {
+  name: string;
+  frameIndexes: number[];
+}

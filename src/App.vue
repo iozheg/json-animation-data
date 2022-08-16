@@ -4,24 +4,27 @@ import Controls from "./components/Controls.vue"
 import WorkZone from "./components/WorkZone.vue"
 import FrameCanvas from "./components/FrameCanvas.vue";
 import FrameList from "./components/FrameList.vue";
-import type { IFramesForm, IFrameOptions } from "./types";
+import type { IFramesForm, IFrameOptions, IAnimation } from "./types";
+import { ControlView } from "./enums";
 
 interface IState {
   image: HTMLImageElement | null;
   scale: number;
-  showCreateFrames: boolean;
+  controlView: ControlView;
   framesForm: IFramesForm | null;
   currentFrames: IFrameOptions[];
   frames: IFrameOptions[];
+  animations: IAnimation[];
 }
 
 const state = reactive<IState>({
   image: null,
   scale: 2,
-  showCreateFrames: false,
+  controlView: ControlView.NONE,
   framesForm: null,
   currentFrames: [],
   frames: [],
+  animations: [],
 });
 
 const size = computed(() => {
@@ -66,16 +69,19 @@ function updateScale(scale: number) {
 function addFrames() {
   state.frames.push(...state.currentFrames);
   state.currentFrames = [];
-  state.showCreateFrames = false;
 }
 
 function updateFrames(frameList: IFrameOptions[], index: number) {
   state.frames = frameList;
-  selectFrame(index);
+  selectFrames([index]);
 }
 
-function selectFrame(index: number) {
-  state.currentFrames = index > -1 ? [state.frames[index]] : [];
+function selectFrames(indexes: number[]) {
+  state.currentFrames = indexes.map(index => state.frames[index]);
+}
+
+function addAnimation(name: string, frameIndexes: number[]) {
+  state.animations.push({ name, frameIndexes });
 }
 </script>
 
@@ -83,17 +89,21 @@ function selectFrame(index: number) {
   <div class="controls-wrapper">
     <Controls
       :scale="state.scale"
+      :frames="state.frames"
+      :controlView="state.controlView"
       @image-loaded="(img) => state.image = img"
       @update-scale="updateScale"
-      @show-create-frames="(status) => state.showCreateFrames = status"
+      @show-control-view="(view) => state.controlView = view"
       @update-frames-form="updateData"
       @add-frames="addFrames"
+      @select-frames="selectFrames"
+      @add-animation="addAnimation"
     />
     <FrameList
-      v-if="state.frames.length && !state.showCreateFrames"
+      v-if="state.frames.length && state.controlView === ControlView.NONE"
       :frames="state.frames"
       @update-frame-list="updateFrames"
-      @select-frame="selectFrame"
+      @select-frames="selectFrames"
     />
   </div>
   <div v-if="state.image">

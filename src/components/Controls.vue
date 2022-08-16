@@ -1,29 +1,33 @@
 <script setup lang="ts">
 import { reactive } from "vue";
-import type { IFramesForm } from "@/types";
+import type { IFrameOptions, IFramesForm } from "@/types";
 import InputControl from "./InputControl.vue";
 import CreateFramesForm from "./CreateFramesForm.vue";
+import CreateAnimationForm from "./CreateAnimationForm.vue";
+import { ControlView } from "@/enums";
 
 interface IState {
   imageLoaded: boolean;
-  showFrameControls: boolean;
 }
 
 defineProps<{
   scale: number;
+  frames: IFrameOptions[];
+  controlView: ControlView;
 }>();
 
 const emit = defineEmits<{
   (e: "imageLoaded", image: HTMLImageElement): void,
   (e: "updateScale", scale: number): void,
-  (e: "showCreateFrames", state: boolean): void,
+  (e: "showControlView", view: ControlView): void,
   (e: "updateFramesForm", controls: IFramesForm): void,
   (e: "addFrames"): void,
+  (e: "selectFrames", frameIndexes: number[]): void,
+  (e: "addAnimation", name: string, frameIndexes: number[]): void,
 }>();
 
 const state: IState = reactive({
   imageLoaded: false,
-  showFrameControls: false,
 });
 
 function loadSpritesheet(event: Event) {
@@ -45,8 +49,11 @@ function updateScale(scale: number) {
 }
 
 function createFrames() {
-  state.showFrameControls = true;
-  emit("showCreateFrames", true);
+  emit("showControlView", ControlView.CREATE_FRAMES);
+}
+
+function createAnimation() {
+  emit("showControlView", ControlView.CREATE_ANIMATION);
 }
 
 function updateFramesForm(form: IFramesForm) {
@@ -54,13 +61,20 @@ function updateFramesForm(form: IFramesForm) {
 }
 
 function addFrames() {
-  state.showFrameControls = false;
   emit("addFrames");
+  emit("showControlView", ControlView.NONE);
 }
 
 function cancel() {
-  emit("showCreateFrames", false);
-  state.showFrameControls = false;
+  emit("showControlView", ControlView.NONE);
+}
+
+function selectAnimationFrames(frameIndexes: number[]) {
+  emit("selectFrames", frameIndexes);
+}
+
+function addAnimation(name: string, frameIndexes: number[]) {
+  emit("addAnimation", name, frameIndexes);
 }
 </script>
 
@@ -74,17 +88,34 @@ function cancel() {
       @update:modelValue="updateScale"
     />
     <hr>
-    <button
-      v-if="state.imageLoaded && !state.showFrameControls"
-      class="btn"
-      @click="createFrames"
-    >Create frames</button>
-    <CreateFramesForm
-      v-if="state.showFrameControls"
-      @update-form="updateFramesForm"
-      @add-frames="addFrames"
-      @cancel="cancel"
-    />
+    <template v-if="state.imageLoaded">
+      <div class="buttons">
+        <button
+          v-if="controlView === ControlView.NONE"
+          class="btn"
+          @click="createFrames"
+        >Create frames</button>
+        <button
+          v-if="frames.length && controlView === ControlView.NONE"
+          class="btn"
+          @click="createAnimation"
+        >Create animation</button>
+      </div>
+      <CreateFramesForm
+        v-if="controlView === ControlView.CREATE_FRAMES"
+        @update-form="updateFramesForm"
+        @add-frames="addFrames"
+        @cancel="cancel"
+      />
+      <CreateAnimationForm
+        v-if="controlView === ControlView.CREATE_ANIMATION"
+        :frames="frames"
+        @select-frames="selectAnimationFrames"
+        @add-animation="addAnimation"
+        @cancel="cancel"
+      />
+    </template>
+    
   </div>
 </template>
 
@@ -98,5 +129,11 @@ function cancel() {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
+  }
+
+  .controls .buttons {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
   }
 </style>

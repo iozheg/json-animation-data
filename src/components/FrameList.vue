@@ -13,7 +13,7 @@ const props = defineProps<{
 
 const emit = defineEmits<{
   (e: "updateFrameList", frameList: IFrameOptions[], index: number): void;
-  (e: "selectFrame", frameIndex: number): void;
+  (e: "selectFrames", frameIndex: number[]): void;
 }>();
 
 const state: IState = reactive({
@@ -22,7 +22,7 @@ const state: IState = reactive({
 
 function selectFrame(index: number) {
   state.selectedFrame = index;
-  emit("selectFrame", index);
+  emit("selectFrames", [index]);
 }
 
 function updateFrame(updatedFrame: IFrameOptions, update = true) {
