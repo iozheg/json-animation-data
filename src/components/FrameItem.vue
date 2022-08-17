@@ -7,6 +7,7 @@ defineProps<{
 
 const emit = defineEmits<{
   (e: "selectFrame"): void;
+  (e: "editFrame"): void;
   (e: "deleteFrame"): void;
 }>();
 </script>
@@ -16,7 +17,7 @@ const emit = defineEmits<{
     <div class="frame-item__name" @click="emit('selectFrame')">
       {{ frame.name }}
     </div>
-    <button class="frame-item__change" @click="emit('selectFrame')">Change</button>
+    <button class="frame-item__change" @click="emit('editFrame')">Change</button>
     <button class="frame-item__delete" @click="emit('deleteFrame')">Del</button>
   </div>
 </template>

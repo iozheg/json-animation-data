@@ -4,9 +4,6 @@ import type { IFrameOptions } from "@/types";
 import FrameItem from "./FrameItem.vue";
 import FrameControls from "./FrameControls.vue";
 
-interface IState {
-  selectedFrame: number;
-}
 const props = defineProps<{
   frames: IFrameOptions[];
 }>();
@@ -16,26 +13,31 @@ const emit = defineEmits<{
   (e: "selectFrames", frameIndex: number[]): void;
 }>();
 
-const state: IState = reactive({
-  selectedFrame: -1,
+const state = reactive({
+  editableFrame: -1,
 });
 
 function selectFrame(index: number) {
-  state.selectedFrame = index;
   emit("selectFrames", [index]);
 }
 
+function editFrame(index: number) {
+  state.editableFrame = index;
+  emit("selectFrames", [index]);
+}
+
+
 function updateFrame(updatedFrame: IFrameOptions, update = true) {
-  if (state.selectedFrame > -1) {
+  if (state.editableFrame > -1) {
     const updatedList = [...props.frames];
-    updatedList[state.selectedFrame] = updatedFrame;
-    emit("updateFrameList", updatedList, update ? state.selectedFrame : -1);
+    updatedList[state.editableFrame] = updatedFrame;
+    emit("updateFrameList", updatedList, update ? state.editableFrame : -1);
   }
 }
 
 function saveFrame(updatedFrame: IFrameOptions) {
   updateFrame(updatedFrame, false);
-  state.selectedFrame = -1;
+  state.editableFrame = -1;
 }
 
 function deleteFrame(index: number) {
@@ -52,10 +54,11 @@ function deleteFrame(index: number) {
       <FrameItem
         :frame="frame"
         @select-frame="selectFrame(index)"
+        @edit-frame="editFrame(index)"
         @delete-frame="deleteFrame(index)"
       />
       <FrameControls
-        v-if="state.selectedFrame === index"
+        v-if="state.editableFrame === index"
         :frame="frame"
         @update="updateFrame"
         @save="saveFrame"
