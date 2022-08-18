@@ -1,3 +1,5 @@
+import type { ListType } from "./enums";
+
 export interface IFramesForm {
   amount: number;
   startOffset: {
@@ -26,6 +28,11 @@ export interface IFrameOptions {
 export interface IAnimation {
   name: string;
   frameIndexes: number[];
+}
+
+export interface IListTabs {
+  type: ListType;
+  label: string;
 }
 
 export type IListItem = IFrameOptions | IAnimation;

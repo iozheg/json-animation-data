@@ -4,7 +4,6 @@ import type { IListItem } from "@/types";
 import ListItem from "./ListItem.vue";
 
 const props = defineProps<{
-  title: string;
   items: IListItem[];
   editable?: boolean;
 }>();
@@ -32,7 +31,6 @@ function deleteItem(index: number) {
 
 <template>
   <div class="list">
-    {{ title }}:
     <div v-for="(item, index) in items" class="list__items">
       <ListItem
         :item="item"

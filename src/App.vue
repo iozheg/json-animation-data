@@ -3,10 +3,11 @@ import { computed, reactive } from "vue";
 import Controls from "./components/Controls.vue"
 import WorkZone from "./components/WorkZone.vue"
 import FrameCanvas from "./components/FrameCanvas.vue";
+import ListTabs from "./components/ListTabs.vue";
 import List from "./components/List.vue";
 import FrameControls from "./components/FrameControls.vue";
-import type { IFramesForm, IFrameOptions, IAnimation } from "./types";
-import { ControlView } from "./enums";
+import type { IFramesForm, IFrameOptions, IAnimation, IListTabs } from "./types";
+import { ControlView, ListType } from "./enums";
 
 interface IState {
   image: HTMLImageElement | null;
@@ -18,6 +19,8 @@ interface IState {
   animations: IAnimation[];
   editableFrameIndex: number;
   editableFrame: IFrameOptions | null;
+  listTabs: IListTabs[];
+  selectedListTab: ListType;
 }
 
 const state = reactive<IState>({
@@ -30,6 +33,11 @@ const state = reactive<IState>({
   animations: [],
   editableFrameIndex: -1,
   editableFrame: null,
+  listTabs: [
+    { type: ListType.FRAMES, label: "Frames" },
+    { type: ListType.ANIMATIONS, label: "Animations" },
+  ],
+  selectedListTab: ListType.FRAMES,
 });
 
 const size = computed(() => {
@@ -37,6 +45,11 @@ const size = computed(() => {
     width: (state.image?.width || 0) * state.scale,
     height: (state.image?.height || 0) * state.scale,
   }
+});
+
+const showListBlock = computed(() => {
+  return state.controlView === ControlView.NONE
+    && (state.frames.length || state.animations.length);
 });
 
 function updateData(form: IFramesForm) {
@@ -132,30 +145,37 @@ function selectAnimation(index: number) {
       :scale="state.scale"
       :frames="state.frames"
       :controlView="state.controlView"
-      @image-loaded="(img) => state.image = img"
+      @image-loaded="state.image = $event"
       @update-scale="updateScale"
-      @show-control-view="(view) => state.controlView = view"
+      @show-control-view="state.controlView = $event"
       @update-frames-form="updateData"
       @add-frames="addFrames"
       @select-frames="selectFrames"
       @add-animation="addAnimation"
     />
-    <List
-      v-if="state.frames.length && state.controlView === ControlView.NONE"
-        :title="'Frame list'"
-        :items="state.frames"
-        :editable="true"
-        @update-list="updateFrames"
-        @select-items="selectFrame"
-        @edit-item="editFrame"
-    />
-    <List
-      v-if="state.animations.length && state.controlView === ControlView.NONE"
-        :title="'Animation list'"
-        :items="state.animations"
-        @update-list="updateAnimations"
-        @select-items="selectAnimation"
-    />
+
+    <template v-if="showListBlock">
+      <ListTabs
+        :tabs="state.listTabs"
+        :selected="state.selectedListTab"
+        @selectTab="state.selectedListTab = $event"
+      />
+      <List
+        v-if="state.selectedListTab === ListType.FRAMES"
+          :items="state.frames"
+          :editable="true"
+          @update-list="updateFrames"
+          @select-items="selectFrame"
+          @edit-item="editFrame"
+      />
+      <List
+        v-if="state.selectedListTab === ListType.ANIMATIONS"
+          :items="state.animations"
+          @update-list="updateAnimations"
+          @select-items="selectAnimation"
+      />
+    </template>
+
     <FrameControls
       v-if="state.editableFrame"
       :frame="state.editableFrame"
