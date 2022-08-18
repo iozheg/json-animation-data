@@ -10,12 +10,17 @@ const props = defineProps<{
 
 const emit = defineEmits<{
   (e: "updateList", list: IListItem[]): void;
-  (e: "selectItems", index: number[]): void;
+  (e: "selectItem", index: number): void;
   (e: "editItem", index: number): void;
 }>();
 
+const state = reactive({
+  selectedItem: -1,
+});
+
 function selectItem(index: number) {
-  emit("selectItems", [index]);
+  state.selectedItem = index;
+  emit("selectItem", index);
 }
 
 function editItem(index: number) {
@@ -31,15 +36,15 @@ function deleteItem(index: number) {
 
 <template>
   <div class="list">
-    <div v-for="(item, index) in items" class="list__items">
-      <ListItem
-        :item="item"
-        :editable="editable"
-        @select="selectItem(index)"
-        @edit="editItem(index)"
-        @delete="deleteItem(index)"
-      />
-    </div>
+    <ListItem
+      v-for="(item, index) in items"
+      :item="item"
+      :editable="editable"
+      :selected="index === state.selectedItem"
+      @select="selectItem(index)"
+      @edit="editItem(index)"
+      @delete="deleteItem(index)"
+    />
   </div>
 </template>
 
@@ -48,9 +53,7 @@ function deleteItem(index: number) {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-  }
-
-  .list .list-items {
-    width: 100%;
+    background-color: var(--color-bkgnd-component);
+    border-top: 1px solid var(--color-accent);
   }
 </style>

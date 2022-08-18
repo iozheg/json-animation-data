@@ -58,12 +58,14 @@ function cancel() {
       @update:modelValue="update('height', $event)"
     />
     <div class="flex-break"></div>
-    <button
-      class="btn"
-      @click="save">Save</button>
-    <button
-      class="btn"
-      @click="cancel">Cancel</button>
+    <div class="btn-group">
+      <button
+        class="btn"
+        @click="save">Save</button>
+      <button
+        class="btn"
+        @click="cancel">Cancel</button>
+    </div>
   </div>
 </template>
 
@@ -72,8 +74,9 @@ function cancel() {
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
-    margin-bottom: 10px;
-    margin-top: 6px;
-    background-color: #333333;
+    margin-top: 20px;
+    padding: 6px 0;
+    border-top: 1px solid var(--color-accent);
+    background-color: var(--color-bkgnd-component);
   }
 </style>

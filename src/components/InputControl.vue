@@ -16,3 +16,14 @@ defineEmits(["update:modelValue"]);
     >
   </div>
 </template>
+
+<style scoped>
+  .input-control {
+    line-height: 1;
+  }
+
+  .input-control label {
+    padding-left: 2px;
+    color: var(--text-gray);
+  }
+</style>

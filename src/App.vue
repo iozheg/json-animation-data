@@ -52,6 +52,16 @@ const showListBlock = computed(() => {
     && (state.frames.length || state.animations.length);
 });
 
+function reset() {
+  state.editableFrameIndex = -1;
+  state.editableFrame = null;
+}
+
+function showControlView(view: ControlView) {
+  reset();
+  state.controlView = view;
+}
+
 function updateData(form: IFramesForm) {
   state.framesForm = form;
   const frames: IFrameOptions[] = [];
@@ -115,13 +125,11 @@ function updateFrame(updatedFrame: IFrameOptions) {
 
 function saveFrame(updatedFrame: IFrameOptions) {
   state.frames[state.editableFrameIndex] = updatedFrame;
-  state.editableFrameIndex = -1;
-  state.editableFrame = null;
+  reset();
 }
 
 function cancelFrameEditing() {
-  state.editableFrameIndex = -1;
-  state.editableFrame = null;
+  reset();
 }
 
 
@@ -147,7 +155,7 @@ function selectAnimation(index: number) {
       :controlView="state.controlView"
       @image-loaded="state.image = $event"
       @update-scale="updateScale"
-      @show-control-view="state.controlView = $event"
+      @show-control-view="showControlView"
       @update-frames-form="updateData"
       @add-frames="addFrames"
       @select-frames="selectFrames"
@@ -158,6 +166,7 @@ function selectAnimation(index: number) {
       <ListTabs
         :tabs="state.listTabs"
         :selected="state.selectedListTab"
+        class="list-tabs"
         @selectTab="state.selectedListTab = $event"
       />
       <List
@@ -165,14 +174,14 @@ function selectAnimation(index: number) {
           :items="state.frames"
           :editable="true"
           @update-list="updateFrames"
-          @select-items="selectFrame"
+          @select-item="selectFrame"
           @edit-item="editFrame"
       />
       <List
         v-if="state.selectedListTab === ListType.ANIMATIONS"
           :items="state.animations"
           @update-list="updateAnimations"
-          @select-items="selectAnimation"
+          @select-item="selectAnimation"
       />
     </template>
 
@@ -202,6 +211,10 @@ function selectAnimation(index: number) {
 .controls-wrapper {
   max-width: 300px;
   width: 300px;
-  margin-right: 6px;
+  padding: 30px 10px 0 10px;
+}
+
+.list-tabs {
+  margin-top: 30px;
 }
 </style>

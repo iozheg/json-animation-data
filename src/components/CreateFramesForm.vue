@@ -89,14 +89,16 @@ function cancel() {
       type="number"
     />
     <div class="flex-break"></div>
-    <button
-      class="btn"
-      @click="addFrames"
-    >Add</button>
-    <button
-      class="btn"
-      @click="cancel"
-    >Cancel</button>
+    <div class="btn-group">
+      <button
+        class="btn"
+        @click="addFrames"
+      >Add</button>
+      <button
+        class="btn"
+        @click="cancel"
+      >Cancel</button>
+    </div>
   </div>
 </template>
 

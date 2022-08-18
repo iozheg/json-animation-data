@@ -4,6 +4,7 @@ import type { IListItem } from "@/types";
 defineProps<{
   item: IListItem;
   editable: boolean;
+  selected: boolean;
 }>();
 
 const emit = defineEmits<{
@@ -14,12 +15,19 @@ const emit = defineEmits<{
 </script>
 
 <template>
-  <div class="list-item">
+  <div class="list-item" :class="{ selected: selected }">
     <div class="list-item__name" @click="emit('select')">
       {{ item.name }}
     </div>
-    <button v-if="editable" class="list-item__change" @click="emit('edit')">Edit</button>
-    <button class="list-item__delete" @click="emit('delete')">Del</button>
+    <button
+      v-if="editable"
+      class="btn list-item__change"
+      @click="emit('edit')"
+    >Edit</button>
+    <button
+      class="btn list-item__delete"
+      @click="emit('delete')"
+    >Del</button>
   </div>
 </template>
 
@@ -27,6 +35,24 @@ const emit = defineEmits<{
 .list-item {
   display: flex;
   width: 100%;
+  margin-bottom: 4px;
+  padding-left: 4px;
+}
+
+.list-item:hover {
+  background-color: var(--color-bkgnd-item-hover);
+}
+
+.list-item:last-of-type {
+  margin-bottom: 0px;
+}
+
+.list-item.selected {
+  background-color: var(--color-bkgnd-item-selected);
+}
+
+.list-item .btn {
+  width: unset;
 }
 
 .list-item .list-item__name {

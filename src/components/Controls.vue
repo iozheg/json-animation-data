@@ -89,34 +89,33 @@ function addAnimation(name: string, frameIndexes: number[]) {
       @update:modelValue="updateScale"
     />
     <hr>
-    <template v-if="state.imageLoaded">
-      <div class="buttons">
-        <button
-          v-if="controlView === ControlView.NONE"
-          class="btn"
-          @click="createFrames"
-        >Create frames</button>
-        <button
-          v-if="frames.length && controlView === ControlView.NONE"
-          class="btn"
-          @click="createAnimation"
-        >Create animation</button>
-      </div>
-      <CreateFramesForm
-        v-if="controlView === ControlView.CREATE_FRAMES"
-        @update-form="updateFramesForm"
-        @add-frames="addFrames"
-        @cancel="cancel"
-      />
-      <CreateAnimationForm
-        v-if="controlView === ControlView.CREATE_ANIMATION"
-        :frames="frames"
-        @select-frames="selectAnimationFrames"
-        @add-animation="addAnimation"
-        @cancel="cancel"
-      />
-    </template>
-    
+    <div class="buttons">
+      <button
+        :disabled="!state.imageLoaded || controlView !== ControlView.NONE"
+        class="btn btn-w"
+        @click="createFrames"
+      >Create frames</button>
+      <button
+        :disabled="!frames.length || controlView !== ControlView.NONE"
+        class="btn btn-w"
+        @click="createAnimation"
+      >Create animation</button>
+    </div>
+    <CreateFramesForm
+      v-if="controlView === ControlView.CREATE_FRAMES"
+      class="create-form"
+      @update-form="updateFramesForm"
+      @add-frames="addFrames"
+      @cancel="cancel"
+    />
+    <CreateAnimationForm
+      class="create-form"
+      v-if="controlView === ControlView.CREATE_ANIMATION"
+      :frames="frames"
+      @select-frames="selectAnimationFrames"
+      @add-animation="addAnimation"
+      @cancel="cancel"
+    />
   </div>
 </template>
 
@@ -136,5 +135,9 @@ function addAnimation(name: string, frameIndexes: number[]) {
     display: flex;
     justify-content: space-between;
     width: 100%;
+  }
+
+  .controls .create-form {
+    margin-top: 30px;
   }
 </style>
