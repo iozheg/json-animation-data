@@ -3,8 +3,8 @@ import { computed, reactive } from "vue";
 import Controls from "./components/Controls.vue"
 import WorkZone from "./components/WorkZone.vue"
 import FrameCanvas from "./components/FrameCanvas.vue";
-import FrameList from "./components/FrameList.vue";
-import AnimationList from "./components/AnimationList.vue";
+import List from "./components/List.vue";
+import FrameControls from "./components/FrameControls.vue";
 import type { IFramesForm, IFrameOptions, IAnimation } from "./types";
 import { ControlView } from "./enums";
 
@@ -16,6 +16,8 @@ interface IState {
   currentFrames: IFrameOptions[];
   frames: IFrameOptions[];
   animations: IAnimation[];
+  editableFrameIndex: number;
+  editableFrame: IFrameOptions | null;
 }
 
 const state = reactive<IState>({
@@ -26,6 +28,8 @@ const state = reactive<IState>({
   currentFrames: [],
   frames: [],
   animations: [],
+  editableFrameIndex: -1,
+  editableFrame: null,
 });
 
 const size = computed(() => {
@@ -72,14 +76,41 @@ function addFrames() {
   state.currentFrames = [];
 }
 
-function updateFrames(frameList: IFrameOptions[], index: number) {
+function updateFrames(frameList: IFrameOptions[]) {
   state.frames = frameList;
-  selectFrames([index]);
+  state.currentFrames = [];
 }
 
 function selectFrames(indexes: number[]) {
   state.currentFrames = indexes.map(index => state.frames[index]);
 }
+
+function selectFrame(index: number) {
+  selectFrames([index]);
+}
+
+function editFrame(index: number) {
+  state.editableFrameIndex = index;
+  state.editableFrame = state.frames[index];
+  state.currentFrames = [state.frames[index]];
+}
+
+function updateFrame(updatedFrame: IFrameOptions) {
+  state.editableFrame = updatedFrame;
+  state.currentFrames = [updatedFrame];
+}
+
+function saveFrame(updatedFrame: IFrameOptions) {
+  state.frames[state.editableFrameIndex] = updatedFrame;
+  state.editableFrameIndex = -1;
+  state.editableFrame = null;
+}
+
+function cancelFrameEditing() {
+  state.editableFrameIndex = -1;
+  state.editableFrame = null;
+}
+
 
 function addAnimation(name: string, frameIndexes: number[]) {
   state.animations.push({ name, frameIndexes });
@@ -87,6 +118,11 @@ function addAnimation(name: string, frameIndexes: number[]) {
 
 function updateAnimations(animations: IAnimation[]) {
   state.animations = animations;
+  state.currentFrames = [];
+}
+
+function selectAnimation(index: number) {
+  state.currentFrames = state.animations[index].frameIndexes.map(fIdx => state.frames[fIdx]);
 }
 </script>
 
@@ -104,18 +140,28 @@ function updateAnimations(animations: IAnimation[]) {
       @select-frames="selectFrames"
       @add-animation="addAnimation"
     />
-    <FrameList
+    <List
       v-if="state.frames.length && state.controlView === ControlView.NONE"
-      :frames="state.frames"
-      @update-frame-list="updateFrames"
-      @select-frames="selectFrames"
+        :title="'Frame list'"
+        :items="state.frames"
+        :editable="true"
+        @update-list="updateFrames"
+        @select-items="selectFrame"
+        @edit-item="editFrame"
     />
-    <AnimationList
+    <List
       v-if="state.animations.length && state.controlView === ControlView.NONE"
-      :animations="state.animations"
-      :frames="state.frames"
-      @update-animation-list="updateAnimations"
-      @select-animation="selectFrames"
+        :title="'Animation list'"
+        :items="state.animations"
+        @update-list="updateAnimations"
+        @select-items="selectAnimation"
+    />
+    <FrameControls
+      v-if="state.editableFrame"
+      :frame="state.editableFrame"
+      @update="updateFrame"
+      @save="saveFrame"
+      @cancel="cancelFrameEditing"
     />
   </div>
   <div v-if="state.image">

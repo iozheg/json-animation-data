@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { reactive, watch } from "vue";
 import type { IFrameOptions } from "@/types";
 import InputControl from "./InputControl.vue";
 
@@ -10,54 +9,61 @@ const props = defineProps<{
 const emit = defineEmits<{
   (e: "update", frame: IFrameOptions): void,
   (e: "save", frame: IFrameOptions): void,
+  (e: "cancel"): void,
 }>();
 
-const state: IFrameOptions = reactive({
-  ...props.frame,
-});
-
-watch(
-  () => state,
-  () => emit("update", state),
-  { deep: true }
-);
+function update(field: string, value: unknown) {
+  emit("update", { ...props.frame, [field]: value });
+}
 
 function save() {
-  emit("save", state);
+  emit("save", props.frame);
+}
+
+function cancel() {
+  emit("cancel");
 }
 </script>
 
 <template>
   <div class="frame-controls">
     <InputControl
-      v-model="state.name"
+      :modelValue="frame.name"
       label="Name:"
+      @update:modelValue="update('name', $event)"
     />
     <div class="flex-break"></div>
     <InputControl
-      v-model.number="state.x"
+      :modelValue="frame.x"
       label="x:"
       type="number"
+      @update:modelValue="update('x', $event)"
     />
     <InputControl
-      v-model.number="state.y"
+      :modelValue="frame.y"
       label="y:"
       type="number"
+      @update:modelValue="update('y', $event)"
     />
     <InputControl
-      v-model.number="state.width"
+      :modelValue="frame.width"
       label="Width:"
       type="number"
+      @update:modelValue="update('width', $event)"
     />
     <InputControl
-      v-model.number="state.height"
+      :modelValue="frame.height"
       label="Height:"
       type="number"
+      @update:modelValue="update('height', $event)"
     />
     <div class="flex-break"></div>
     <button
       class="btn"
-      @click="save">save</button>
+      @click="save">Save</button>
+    <button
+      class="btn"
+      @click="cancel">Cancel</button>
   </div>
 </template>
 

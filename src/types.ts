@@ -27,3 +27,5 @@ export interface IAnimation {
   name: string;
   frameIndexes: number[];
 }
+
+export type IListItem = IFrameOptions | IAnimation;
