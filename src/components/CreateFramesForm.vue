@@ -2,6 +2,8 @@
 import { onMounted, reactive, watch } from "vue";
 import type { IFramesForm } from "@/types";
 import InputControl from "./InputControl.vue";
+import Information from "./Information.vue";
+import strings from "@/strings";
 
 const emit = defineEmits<{
   (e: "updateForm", controls: IFramesForm): void,
@@ -88,7 +90,9 @@ function cancel() {
       label="Frame height:"
       type="number"
     />
-    <div class="flex-break"></div>
+
+    <Information class="info" :text="strings.createFramesDesc" />
+
     <div class="btn-group">
       <button
         class="btn"
@@ -107,5 +111,9 @@ function cancel() {
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
+  }
+
+  .frame-form .info {
+    margin-top: 20px;
   }
 </style>

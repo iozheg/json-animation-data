@@ -4,7 +4,9 @@ import type { IFrameOptions, IFramesForm } from "@/types";
 import InputControl from "./InputControl.vue";
 import CreateFramesForm from "./CreateFramesForm.vue";
 import CreateAnimationForm from "./CreateAnimationForm.vue";
+import Information from "./Information.vue";
 import { ControlView } from "@/enums";
+import strings from "@/strings";
 
 interface IState {
   imageLoaded: boolean;
@@ -81,6 +83,7 @@ function addAnimation(name: string, frameIndexes: number[]) {
 
 <template>
   <div class="controls">
+    <Information :text="strings.instructions" class="instruction-info" />
     <input type="file" @change="loadSpritesheet">
     <InputControl
       :modelValue="scale"
@@ -130,6 +133,10 @@ function addAnimation(name: string, frameIndexes: number[]) {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
+  }
+
+  .controls .instruction-info {
+    margin-bottom: 20px;
   }
 
   .controls .main-button {
