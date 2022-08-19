@@ -36,3 +36,37 @@ export interface IListTabs {
 }
 
 export type IListItem = IFrameOptions | IAnimation;
+
+export interface ISpritesheetFrameData {
+  frame: {
+    x: number;
+    y: number;
+    w: number;
+    h: number;
+  };
+  trimmed?: boolean;
+  rotated?: boolean;
+  sourceSize?: {
+    w: number;
+    h: number;
+  };
+  spriteSourceSize?: {
+    x: number;
+    y: number;
+  };
+  anchor?: {
+    x: number;
+    y: number;
+  };
+}
+
+/**
+* Atlas format.
+*/
+export interface ISpritesheetData {
+  frames: { [key: string]: ISpritesheetFrameData };
+  animations: { [key: string]: string[] };
+  meta: {
+    scale: number;
+  };
+}

@@ -9,9 +9,11 @@ import List from "./components/List.vue";
 import EditFrameForm from "./components/EditFrameForm.vue";
 import type { IFramesForm, IFrameOptions, IAnimation, IListTabs } from "./types";
 import { ControlView, ListType } from "./enums";
+import { createJson } from "./logic";
 
 interface IState {
   image: HTMLImageElement | null;
+  fileName: string,
   scale: number;
   controlView: ControlView;
   framesForm: IFramesForm | null;
@@ -26,6 +28,7 @@ interface IState {
 
 const state = reactive<IState>({
   image: null,
+  fileName: "",
   scale: 2,
   controlView: ControlView.NONE,
   framesForm: null,
@@ -88,11 +91,20 @@ function updateData(form: IFramesForm) {
   }
 }
 
+function setImage(image: HTMLImageElement, name: string) {
+  state.image = image,
+  state.fileName = name;
+}
+
 function updateScale(scale: number) {
   state.scale = scale;
   if (state.framesForm) {
     updateData(state.framesForm);
   }
+}
+
+function exportData() {
+  createJson(state.frames, state.animations, state.scale, state.fileName);
 }
 
 function addFrames() {
@@ -153,8 +165,9 @@ function selectAnimation(index: number) {
     <GeneralControls
       :scale="state.scale"
       :readyToExport="!!state.frames.length"
-      @image-loaded="state.image = $event"
+      @image-loaded="setImage"
       @update-scale="updateScale"
+      @export-json="exportData"
     />
     <DataControls
       v-if="state.image"
