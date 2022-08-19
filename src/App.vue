@@ -9,7 +9,7 @@ import List from "./components/List.vue";
 import EditFrameForm from "./components/EditFrameForm.vue";
 import type { IFramesForm, IFrameOptions, IAnimation, IListTabs } from "./types";
 import { ControlView, ListType } from "./enums";
-import { createJson } from "./logic";
+import { buildFrames, createJson } from "./logic";
 
 interface IState {
   image: HTMLImageElement | null;
@@ -68,26 +68,8 @@ function showControlView(view: ControlView) {
 
 function updateData(form: IFramesForm) {
   state.framesForm = form;
-  const frames: IFrameOptions[] = [];
-
   if (state.image) {
-    const { amount, startOffset, spaceBetween, frameSize, frameName } = form;
-    const framesInRow = Math.floor(state.image?.width / (frameSize.width + spaceBetween.x));
-    const rows = Math.ceil(amount / framesInRow);
-    for(let r = 0; r < rows; r++) {
-      for(let i = 0; i < framesInRow && r * framesInRow + i < amount; i++) {
-        const frame = {
-          x: (i * (frameSize.width + spaceBetween.x) + startOffset.x + i) * state.scale,
-          y: (r * (frameSize.height + spaceBetween.y) + startOffset.y + r) * state.scale,
-          width: frameSize.width * state.scale,
-          height: frameSize.height * state.scale,
-          name: `${frameName}_${r * framesInRow + i}`,
-        }
-        frames.push(frame);
-      }
-    }
-
-    state.currentFrames = frames;
+    state.currentFrames = buildFrames(form, state.scale, state.image.width);
   }
 }
 

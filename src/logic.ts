@@ -1,4 +1,26 @@
-import type { IAnimation, IFrameOptions, ISpritesheetData } from "./types";
+import type { IAnimation, IFrameOptions, IFramesForm, ISpritesheetData } from "./types";
+
+export function buildFrames(formData: IFramesForm, scale: number, imageWidth: number) {
+  const frames: IFrameOptions[] = [];
+  const { amount, startOffset, spaceBetween, frameSize, frameName } = formData;
+  const framesInRow = Math.floor(imageWidth / (frameSize.width + spaceBetween.x));
+  const rows = Math.ceil(amount / framesInRow);
+
+  for(let r = 0; r < rows; r++) {
+    for(let i = 0; i < framesInRow && r * framesInRow + i < amount; i++) {
+      const frame = {
+        x: (i * (frameSize.width + spaceBetween.x) + startOffset.x + i) * scale,
+        y: (r * (frameSize.height + spaceBetween.y) + startOffset.y + r) * scale,
+        width: frameSize.width * scale,
+        height: frameSize.height * scale,
+        name: `${frameName}_${r * framesInRow + i}`,
+      }
+      frames.push(frame);
+    }
+  }
+
+  return frames;
+}
 
 export function createJson(
   frames: IFrameOptions[],
