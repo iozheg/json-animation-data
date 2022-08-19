@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, reactive } from "vue";
-import Controls from "./components/Controls.vue"
+import GeneralControls from "./components/GeneralControls.vue"
+import DataControls from "./components/DataControls.vue"
 import WorkZone from "./components/WorkZone.vue"
 import FrameCanvas from "./components/FrameCanvas.vue";
 import ListTabs from "./components/ListTabs.vue";
@@ -149,12 +150,16 @@ function selectAnimation(index: number) {
 
 <template>
   <div class="controls-wrapper">
-    <Controls
+    <GeneralControls
       :scale="state.scale"
-      :frames="state.frames"
-      :controlView="state.controlView"
+      :readyToExport="!!state.frames.length"
       @image-loaded="state.image = $event"
       @update-scale="updateScale"
+    />
+    <DataControls
+      v-if="state.image"
+      :frames="state.frames"
+      :controlView="state.controlView"
       @show-control-view="showControlView"
       @update-frames-form="updateData"
       @add-frames="addFrames"

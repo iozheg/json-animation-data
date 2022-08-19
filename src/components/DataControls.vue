@@ -1,54 +1,21 @@
 <script setup lang="ts">
-import { reactive } from "vue";
 import type { IFrameOptions, IFramesForm } from "@/types";
-import InputControl from "./InputControl.vue";
 import CreateFramesForm from "./CreateFramesForm.vue";
 import CreateAnimationForm from "./CreateAnimationForm.vue";
-import Information from "./Information.vue";
 import { ControlView } from "@/enums";
-import strings from "@/strings";
-
-interface IState {
-  imageLoaded: boolean;
-}
 
 defineProps<{
-  scale: number;
   frames: IFrameOptions[];
   controlView: ControlView;
 }>();
 
 const emit = defineEmits<{
-  (e: "imageLoaded", image: HTMLImageElement): void,
-  (e: "updateScale", scale: number): void,
   (e: "showControlView", view: ControlView): void,
   (e: "updateFramesForm", controls: IFramesForm): void,
   (e: "addFrames"): void,
   (e: "selectFrames", frameIndexes: number[]): void,
   (e: "addAnimation", name: string, frameIndexes: number[]): void,
 }>();
-
-const state: IState = reactive({
-  imageLoaded: false,
-});
-
-function loadSpritesheet(event: Event) {
-  const file = (event.target as HTMLInputElement).files?.[0];
-  if (file) {
-    const img = new Image();
-    img.addEventListener("load", function () {
-      state.imageLoaded = true;
-      emit("imageLoaded", img);
-    });
-
-    // Load file into img
-    img.src = URL.createObjectURL(file);
-  }
-}
-
-function updateScale(scale: number) {
-  emit("updateScale", Number(scale));
-}
 
 function createFrames() {
   emit("showControlView", ControlView.CREATE_FRAMES);
@@ -82,20 +49,10 @@ function addAnimation(name: string, frameIndexes: number[]) {
 </script>
 
 <template>
-  <div class="controls">
-    <Information :text="strings.instructions" class="instruction-info" />
-    <input type="file" @change="loadSpritesheet">
-    <InputControl
-      :modelValue="scale"
-      class="main-button"
-      label="Scale:"
-      type="number"
-      @update:modelValue="updateScale"
-    />
-    <hr>
+  <div class="data-controls">
     <div class="buttons">
       <button
-        :disabled="!state.imageLoaded || controlView !== ControlView.NONE"
+        :disabled="controlView !== ControlView.NONE"
         class="btn btn-w"
         @click="createFrames"
       >Create frames</button>
@@ -105,6 +62,7 @@ function addAnimation(name: string, frameIndexes: number[]) {
         @click="createAnimation"
       >Create animation</button>
     </div>
+
     <CreateFramesForm
       v-if="controlView === ControlView.CREATE_FRAMES"
       class="create-form"
@@ -124,32 +82,19 @@ function addAnimation(name: string, frameIndexes: number[]) {
 </template>
 
 <style scoped>
-  hr {
-    margin: 6px 0;
-    width: 100%;
-  }
-
-  .controls {
+  .data-controls {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
   }
 
-  .controls .instruction-info {
-    margin-bottom: 20px;
-  }
-
-  .controls .main-button {
-    margin-top: 10px;
-  }
-
-  .controls .buttons {
+  .data-controls .buttons {
     display: flex;
     justify-content: space-between;
     width: 100%;
   }
 
-  .controls .create-form {
+  .data-controls .create-form {
     margin-top: 30px;
   }
 </style>
