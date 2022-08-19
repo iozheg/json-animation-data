@@ -64,8 +64,8 @@ function cancel() {
         </div>
       </div>
       <div class="frame-selector-buttons">
-        <button class="frame-selector-buttons__button" @click="selectFrames">&gt;</button>
-        <button class="frame-selector-buttons__button" @click="unselectFrames">&lt;</button>
+        <button class="btn frame-selector-buttons__button" @click="selectFrames">&gt;</button>
+        <button class="btn frame-selector-buttons__button" @click="unselectFrames">&lt;</button>
       </div>
       <div class="frame-list">
         <div class="frame-list__name">Selected frames:</div>
@@ -79,14 +79,16 @@ function cancel() {
       </div>
     </div>
     <div class="flex-break"></div>
-    <button
-      class="btn"
-      @click="addFrames"
-    >Add</button>
-    <button
-      class="btn"
-      @click="cancel"
-    >Cancel</button>
+    <div class="btn-group">
+      <button
+        class="btn"
+        @click="addFrames"
+      >Add</button>
+      <button
+        class="btn"
+        @click="cancel"
+      >Cancel</button>
+    </div>
   </div>
 </template>
 
@@ -102,17 +104,32 @@ function cancel() {
     width: 100%;
   }
 
-  .frame-selector .frame-list {
+  .frame-selector .frame-list .frame-list__name {
+    font-size: 14px;
+  }
+
+  .frame-list__list select {
     width: 120px;
+    height: 150px;
+    background-color: var(--color-bkgnd-component);
   }
 
-  .frame-selector .frame-list .frame-list__list {
-    height: 200px;
+  .frame-list__list select option {
+    margin-bottom: 3px;
+    color: var(--color-text);
+    font-size: 14px;
   }
 
-  .frame-selector .frame-list .frame-list__list select {
-    width: 100%;
-    height: 100%;
+  .frame-list__list select option:hover {
+    background-color: var(--color-bkgnd-item-hover);
+  }
+
+  .frame-list__list select option:checked {
+    background-color: var(--color-bkgnd-item-selected);
+  }
+
+  .frame-list__list select option:focus {
+    background-color: var(--color-bkgnd-item-selected);
   }
 
   .frame-selector-buttons {
@@ -122,6 +139,9 @@ function cancel() {
   }
 
   .frame-selector-buttons .frame-selector-buttons__button {
+    width: 20px;
+    height: 20px;
     margin: 3px 0;
+    line-height: 1;
   }
 </style>

@@ -53,6 +53,8 @@ function deleteItem(index: number) {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
+    height: 175px;
+    overflow: auto;
     background-color: var(--color-bkgnd-component);
     border-top: 1px solid var(--color-accent);
   }

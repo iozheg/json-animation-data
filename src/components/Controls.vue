@@ -84,6 +84,7 @@ function addAnimation(name: string, frameIndexes: number[]) {
     <input type="file" @change="loadSpritesheet">
     <InputControl
       :modelValue="scale"
+      class="main-button"
       label="Scale:"
       type="number"
       @update:modelValue="updateScale"
@@ -129,6 +130,10 @@ function addAnimation(name: string, frameIndexes: number[]) {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
+  }
+
+  .controls .main-button {
+    margin-top: 10px;
   }
 
   .controls .buttons {

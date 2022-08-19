@@ -36,7 +36,7 @@ const emit = defineEmits<{
   display: flex;
   width: 100%;
   margin-bottom: 4px;
-  padding-left: 4px;
+  padding: 0 4px;
 }
 
 .list-item:hover {
