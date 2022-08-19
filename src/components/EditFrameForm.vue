@@ -26,7 +26,7 @@ function cancel() {
 </script>
 
 <template>
-  <div class="frame-controls">
+  <div class="edit-frame-form">
     <InputControl
       :modelValue="frame.name"
       label="Name:"
@@ -70,7 +70,7 @@ function cancel() {
 </template>
 
 <style scoped>
-  .frame-controls {
+  .edit-frame-form {
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;

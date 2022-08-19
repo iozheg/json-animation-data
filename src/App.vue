@@ -5,7 +5,7 @@ import WorkZone from "./components/WorkZone.vue"
 import FrameCanvas from "./components/FrameCanvas.vue";
 import ListTabs from "./components/ListTabs.vue";
 import List from "./components/List.vue";
-import FrameControls from "./components/FrameControls.vue";
+import EditFrameForm from "./components/EditFrameForm.vue";
 import type { IFramesForm, IFrameOptions, IAnimation, IListTabs } from "./types";
 import { ControlView, ListType } from "./enums";
 
@@ -185,7 +185,7 @@ function selectAnimation(index: number) {
       />
     </template>
 
-    <FrameControls
+    <EditFrameForm
       v-if="state.editableFrame"
       :frame="state.editableFrame"
       @update="updateFrame"
@@ -193,7 +193,7 @@ function selectAnimation(index: number) {
       @cancel="cancelFrameEditing"
     />
   </div>
-  <div v-if="state.image">
+  <div v-if="state.image" class="image-wrapper">
     <WorkZone
       :image-src="state.image.src"
       :img-width="size.width"
@@ -212,6 +212,10 @@ function selectAnimation(index: number) {
   max-width: 300px;
   width: 300px;
   padding: 30px 10px 0 10px;
+}
+
+.image-wrapper {
+  padding-top: 30px;
 }
 
 .list-tabs {
