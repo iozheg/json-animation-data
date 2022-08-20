@@ -1,12 +1,27 @@
 <script setup lang="ts">
-  defineProps<{
+  import { computed } from "vue";
+
+  const props = defineProps<{
     text: string;
     type?: string;
   }>();
+
+  defineEmits<{
+    (e: "clearMsg"): void
+  }>();
+
+  const isError = computed(() => props.type === "error");
 </script>
 
 <template>
-  <div class="information" v-html="text"></div>
+  <div class="information" :class="{ error: isError }">
+    <div class="msg" v-html="text"></div>
+    <button
+      v-if="isError"
+      class="btn clear-button"
+      @click="$emit('clearMsg')"
+    >&times;</button>
+  </div>
 </template>
 
 <style scoped>
@@ -20,5 +35,20 @@
 
   .information :deep(*) {
     font-size: 12px;
+  }
+
+  .information.error {
+    background-color: #ee4b4b;
+  }
+
+  .information .clear-button {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 18px;
+    height: 18px;
+    padding: 0;
+    background-color: unset;
+    font-size: 16px;
   }
 </style>
