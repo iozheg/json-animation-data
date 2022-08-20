@@ -7,9 +7,11 @@ import FrameCanvas from "./components/FrameCanvas.vue";
 import ListTabs from "./components/ListTabs.vue";
 import List from "./components/List.vue";
 import EditFrameForm from "./components/EditFrameForm.vue";
+import Information from "./components/Information.vue";
 import type { IFramesForm, IFrameOptions, IAnimation, IListTabs } from "./types";
 import { ControlView, ListType } from "./enums";
 import { buildFrames, createJson } from "./logic";
+import strings from "./strings";
 
 interface IState {
   image: HTMLImageElement | null;
@@ -17,6 +19,7 @@ interface IState {
   scale: number;
   controlView: ControlView;
   framesForm: IFramesForm | null;
+  errorMsg: string,
   currentFrames: IFrameOptions[];
   frames: IFrameOptions[];
   animations: IAnimation[];
@@ -32,6 +35,7 @@ const state = reactive<IState>({
   scale: 2,
   controlView: ControlView.NONE,
   framesForm: null,
+  errorMsg: "",
   currentFrames: [],
   frames: [],
   animations: [],
@@ -129,7 +133,11 @@ function cancelFrameEditing() {
 
 
 function addAnimation(name: string, frameIndexes: number[]) {
-  state.animations.push({ name, frameIndexes });
+  if (state.animations.find((animation) => animation.name === name)) {
+    state.errorMsg = strings.animationNameError;
+  } else {
+    state.animations.push({ name, frameIndexes });
+  }
 }
 
 function updateAnimations(animations: IAnimation[]) {
@@ -192,6 +200,13 @@ function selectAnimation(index: number) {
       @save="saveFrame"
       @cancel="cancelFrameEditing"
     />
+    <Information
+      v-if="state.errorMsg"
+      :text="state.errorMsg"
+      :type="'error'"
+      class="errorMsg"
+      @clear-msg="state.errorMsg = ''"
+    />
   </div>
   <div v-if="state.image" class="image-wrapper">
     <WorkZone
@@ -212,6 +227,10 @@ function selectAnimation(index: number) {
   max-width: 300px;
   width: 300px;
   padding: 30px 10px 0 10px;
+}
+
+.errorMsg {
+  margin-top: 20px;
 }
 
 .image-wrapper {

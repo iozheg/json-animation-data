@@ -7,4 +7,5 @@ export default {
     You can edit frames after creation.`,
   createFramesDesc: `<b>Start X(Y) offset</b> - offset from top left border of spritesheet.<br>
   <b>Horizontal/Vertical padding</b> - paddings between frames.`,
+  animationNameError: `Can't add animation with duplicated name.`,
 };
