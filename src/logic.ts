@@ -34,6 +34,7 @@ export function createJson(
     frames: {},
     animations: {},
     meta: {
+      image: fileName,
       scale: 1,
     },
   };
@@ -63,7 +64,9 @@ export function createJson(
     result.animations[animation.name] = animation.frameIndexes.map((index) => frames[index]?.name);
   });
 
-  exportJson(fileName, JSON.stringify(result));
+  const fileNameParts = fileName.split(".");
+  const fileNameWithoutExt = fileNameParts.slice(0, fileNameParts.length - 1).join(".");
+  exportJson(fileNameWithoutExt, JSON.stringify(result));
 }
 
 export function exportJson(name: string, data: string) {

@@ -67,6 +67,7 @@ export interface ISpritesheetData {
   frames: { [key: string]: ISpritesheetFrameData };
   animations: { [key: string]: string[] };
   meta: {
+    image: string;
     scale: number;
   };
 }

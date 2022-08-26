@@ -20,9 +20,7 @@ function loadSpritesheet(event: Event) {
   if (file) {
     const img = new Image();
     img.addEventListener("load", function () {
-      const fileNameParts = file.name.split(".");
-      const fileName = fileNameParts.slice(0, fileNameParts.length - 1).join(".");
-      emit("imageLoaded", img, fileName);
+      emit("imageLoaded", img, file.name);
     });
 
     // Load file into img

@@ -87,7 +87,7 @@ function updateScale(scale: number) {
 }
 
 function exportData() {
-  createJson(state.frames, state.animations, state.scale, state.fileName);
+  createJson(state.frames, state.animations, state.fileName);
 }
 
 function addFrames() {
