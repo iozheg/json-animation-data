@@ -17,7 +17,6 @@ hr {
   height: 25px;
   border: none;
   border-radius: 2px;
-  /* margin-bottom: 6px; */
   margin: 0 6px;
   background-color: var(--color-bkgnd-item);
   color: var(--color-text);
@@ -56,14 +55,9 @@ hr {
   margin-top: 30px;
 }
 
-/* .btn:hover:enabled {
-  background-color: lightgray;
-} */
-
 .input-control {
   display: flex;
   flex-direction: column;
-  /* width: 140px; */
 }
 
 .input-control label {
@@ -76,7 +70,6 @@ hr {
   border-radius: var(--border-radius) var(--border-radius) 0 0;
   border: none;
   border-bottom: 1px solid var(--color-accent);
-  /* padding: 0 6px; */
   margin-bottom: 10px;
   background-color: var(--color-bkgnd-item);
   color: var(--color-text);
@@ -90,29 +83,3 @@ hr {
   flex-basis: 100%;
   height: 0;
 }
-
-/* a,
-.green {
-  text-decoration: none;
-  color: hsla(160, 100%, 37%, 1);
-  transition: 0.4s;
-}
-
-@media (hover: hover) {
-  a:hover {
-    background-color: hsla(160, 100%, 37%, 0.2);
-  }
-} */
-
-/* @media (min-width: 1024px) {
-  body {
-    display: flex;
-    place-items: center;
-  }
-
-  #app {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    padding: 0 2rem;
-  }
-} */
