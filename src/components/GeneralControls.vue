@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { reactive } from "vue";
 import InputControl from "./InputControl.vue";
 import Information from "./Information.vue";
 import strings from "@/strings";

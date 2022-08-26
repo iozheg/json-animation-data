@@ -36,7 +36,7 @@ function unselectFrames() {
   emit("selectFrames", state.frameIndexes);
 }
 
-function addFrames() {
+function addAnimation() {
   emit("addAnimation", state.animationName, state.frameIndexes);
 }
 
@@ -82,7 +82,7 @@ function cancel() {
     <div class="btn-group">
       <button
         class="btn"
-        @click="addFrames"
+        @click="addAnimation"
       >Add</button>
       <button
         class="btn"

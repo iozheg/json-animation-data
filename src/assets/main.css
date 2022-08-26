@@ -40,6 +40,15 @@ hr {
   margin-right: 0;
 }
 
+.btn:disabled {
+  opacity: 0.5;
+  cursor: unset;
+}
+
+.btn:disabled:hover {
+  background-color: var(--color-bkgnd-item);
+}
+
 .btn-group {
   display: flex;
   justify-content: center;
