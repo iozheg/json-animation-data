@@ -1,6 +1,9 @@
 import type { IAnimation, IFrameOptions, IFramesForm, ISpritesheetData } from "./types";
 
-export function buildFrames(formData: IFramesForm, scale: number, imageWidth: number) {
+export function buildFrames(
+  formData: IFramesForm,
+  imageWidth: number,
+): IFrameOptions[] {
   const frames: IFrameOptions[] = [];
   const { amount, startOffset, spaceBetween, frameSize, frameName } = formData;
   const framesInRow = Math.floor(imageWidth / (frameSize.width + spaceBetween.x));
@@ -9,10 +12,10 @@ export function buildFrames(formData: IFramesForm, scale: number, imageWidth: nu
   for(let r = 0; r < rows; r++) {
     for(let i = 0; i < framesInRow && r * framesInRow + i < amount; i++) {
       const frame = {
-        x: (i * (frameSize.width + spaceBetween.x) + startOffset.x + i) * scale,
-        y: (r * (frameSize.height + spaceBetween.y) + startOffset.y + r) * scale,
-        width: frameSize.width * scale,
-        height: frameSize.height * scale,
+        x: (i * (frameSize.width + spaceBetween.x) + startOffset.x + i),
+        y: (r * (frameSize.height + spaceBetween.y) + startOffset.y + r),
+        width: frameSize.width,
+        height: frameSize.height,
         name: `${frameName}_${r * framesInRow + i}`,
       }
       frames.push(frame);
@@ -25,7 +28,6 @@ export function buildFrames(formData: IFramesForm, scale: number, imageWidth: nu
 export function createJson(
   frames: IFrameOptions[],
   animations: IAnimation[],
-  scale: number,
   fileName: string,
 ) {
   const result: ISpritesheetData = {
@@ -39,14 +41,14 @@ export function createJson(
   frames.forEach((frame) => {
     result.frames[frame.name] = {
       frame: {
-        x: frame.x / scale,
-        y: frame.y / scale,
-        w: frame.width / scale,
-        h: frame.height / scale,
+        x: frame.x,
+        y: frame.y,
+        w: frame.width,
+        h: frame.height,
       },
       sourceSize: {
-        w: frame.width / scale,
-        h: frame.height / scale,
+        w: frame.width,
+        h: frame.height,
       },
       anchor: {
         x: 0.5,

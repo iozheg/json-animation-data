@@ -73,7 +73,7 @@ function showControlView(view: ControlView) {
 function updateData(form: IFramesForm) {
   state.framesForm = form;
   if (state.image) {
-    state.currentFrames = buildFrames(form, state.scale, state.image.width);
+    state.currentFrames = buildFrames(form, state.image.width);
   }
 }
 
@@ -84,9 +84,6 @@ function setImage(image: HTMLImageElement, name: string) {
 
 function updateScale(scale: number) {
   state.scale = scale;
-  if (state.framesForm) {
-    updateData(state.framesForm);
-  }
 }
 
 function exportData() {
@@ -218,6 +215,7 @@ function selectAnimation(index: number) {
       :img-width="size.width"
       :img-height="size.height"
       :frames="state.currentFrames"
+      :scale="state.scale"
     />
   </div>
 </template>
