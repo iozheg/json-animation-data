@@ -12,8 +12,8 @@ export function buildFrames(
   for(let r = 0; r < rows; r++) {
     for(let i = 0; i < framesInRow && r * framesInRow + i < amount; i++) {
       const frame = {
-        x: (i * (frameSize.width + spaceBetween.x) + startOffset.x + i),
-        y: (r * (frameSize.height + spaceBetween.y) + startOffset.y + r),
+        x: (i * (frameSize.width - 1 + spaceBetween.x) + startOffset.x + i),
+        y: (r * (frameSize.height - 1 + spaceBetween.y) + startOffset.y + r),
         width: frameSize.width,
         height: frameSize.height,
         name: `${frameName}_${r * framesInRow + i}`,
