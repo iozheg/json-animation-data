@@ -39,7 +39,7 @@ function deleteItem(index: number) {
     <ListItem
       v-for="(item, index) in items"
       :item="item"
-      :editable="editable"
+      :editable="!!editable"
       :selected="index === state.selectedItem"
       @select="selectItem(index)"
       @edit="editItem(index)"

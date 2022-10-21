@@ -17,16 +17,19 @@ export interface IFramesForm {
   frameName: string;
 }
 
-export interface IFrameOptions {
+
+export interface IListItem {
+  name: string;
+}
+
+export interface IFrameOptions extends IListItem {
   x: number;
   y: number;
   width: number;
   height: number;
-  name: string;
 }
 
-export interface IAnimation {
-  name: string;
+export interface IAnimation extends IListItem {
   frameIndexes: number[];
 }
 
@@ -34,8 +37,6 @@ export interface IListTabs {
   type: ListType;
   label: string;
 }
-
-export type IListItem = IFrameOptions | IAnimation;
 
 export interface ISpritesheetFrameData {
   frame: {

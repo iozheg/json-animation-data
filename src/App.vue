@@ -8,7 +8,7 @@ import ListTabs from "./components/ListTabs.vue";
 import List from "./components/List.vue";
 import EditFrameForm from "./components/EditFrameForm.vue";
 import Information from "./components/Information.vue";
-import type { IFramesForm, IFrameOptions, IAnimation, IListTabs } from "./types";
+import type { IFramesForm, IFrameOptions, IAnimation, IListTabs, IListItem } from "./types";
 import { ControlView, ListType } from "./enums";
 import { buildFrames, createJson } from "./logic";
 import strings from "./strings";
@@ -95,8 +95,8 @@ function addFrames() {
   state.currentFrames = [];
 }
 
-function updateFrames(frameList: IFrameOptions[]) {
-  state.frames = frameList;
+function updateFrames(frameList: IListItem[]) {
+  state.frames = <IFrameOptions[]>frameList;
   state.currentFrames = [];
 }
 
@@ -137,8 +137,8 @@ function addAnimation(name: string, frameIndexes: number[]) {
   }
 }
 
-function updateAnimations(animations: IAnimation[]) {
-  state.animations = animations;
+function updateAnimations(animations: IListItem[]) {
+  state.animations = <IAnimation[]>animations;
   state.currentFrames = [];
 }
 
