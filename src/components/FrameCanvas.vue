@@ -9,9 +9,14 @@ const props = defineProps<{
   scale: number;
 }>();
 
+const emit = defineEmits<{
+  (e: "updateFrames", frames: IFrameOptions[]): void;
+}>();
+
 const state = reactive({
   scaledFrames: <IFrameOptions[]>[],
   hoveredFrame: <IFrameOptions | undefined> undefined,
+  selectedFrameIndex: <number> -1,
   dragStartPosition: <{ x: number, y: number } | undefined> undefined,
 });
 
@@ -88,9 +93,10 @@ function mouseMoveHandler(event: MouseEvent) {
   if (state.dragStartPosition) {
     dragHandler(mx, my);
   } else {
-    const hoveredFrame = state.scaledFrames.find(({ x, y, width, height }) => {
+    state.selectedFrameIndex = state.scaledFrames.findIndex(({ x, y, width, height }) => {
       return (x <= mx && (x + width) >= mx) && (y <= my && (y + height) >= my);
     });
+    const hoveredFrame = state.scaledFrames[state.selectedFrameIndex];
 
     if (hoveredFrame?.name !== state.hoveredFrame?.name) {
       if (state.hoveredFrame) {
@@ -147,6 +153,18 @@ function dragHandler(x: number, y: number) {
 
 function mouseUpHandler() {
   state.dragStartPosition = undefined;
+  if (state.selectedFrameIndex >= 0 && state.hoveredFrame) {
+    const updatedList = [...props.frames];
+    updatedList[state.selectedFrameIndex] = {
+        name: state.hoveredFrame.name,
+        x: state.hoveredFrame.x / props.scale,
+        y: state.hoveredFrame.y / props.scale,
+        width: state.hoveredFrame.width / props.scale,
+        height: state.hoveredFrame.height / props.scale,
+    };
+
+    emit("updateFrames", updatedList);
+  }
 }
 
 function redrawFrame(frame: IFrameOptions, color: string) {
