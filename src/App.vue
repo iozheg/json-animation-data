@@ -20,7 +20,7 @@ interface IState {
   controlView: ControlView;
   framesForm: IFramesForm | null;
   errorMsg: string,
-  currentFrames: IFrameOptions[];
+  visibleFrames: IFrameOptions[];
   frames: IFrameOptions[];
   animations: IAnimation[];
   editableFrameIndex: number;
@@ -36,7 +36,7 @@ const state = reactive<IState>({
   controlView: ControlView.NONE,
   framesForm: null,
   errorMsg: "",
-  currentFrames: [],
+  visibleFrames: [],
   frames: [],
   animations: [],
   editableFrameIndex: -1,
@@ -65,15 +65,27 @@ function reset() {
   state.editableFrame = null;
 }
 
-function showControlView(view: ControlView) {
+function changeControlView(view: ControlView) {
   reset();
   state.controlView = view;
+
+  switch (view) {
+    case ControlView.NONE:
+      state.visibleFrames = [...state.frames];
+      break;
+    case ControlView.CREATE_FRAMES:
+      state.visibleFrames = [];
+      break;
+    case ControlView.CREATE_ANIMATION:
+      state.visibleFrames = [];
+      break;
+  }
 }
 
 function updateData(form: IFramesForm) {
-  state.framesForm = form;
+  state.framesForm = form; //??? remove?? not used
   if (state.image) {
-    state.currentFrames = buildFrames(form, state.image.width);
+    state.visibleFrames = buildFrames(form, state.image.width);
   }
 }
 
@@ -91,32 +103,35 @@ function exportData() {
 }
 
 function addFrames() {
-  state.frames.push(...state.currentFrames);
-  state.currentFrames = [];
+  state.frames.push(...state.visibleFrames);
+  state.visibleFrames = [...state.frames];
 }
 
 function updateFrames(frameList: IListItem[]) {
-  state.frames = <IFrameOptions[]>frameList;
-  state.currentFrames = [];
+  if (state.controlView === ControlView.CREATE_FRAMES) {
+    state.visibleFrames = <IFrameOptions[]>frameList;
+  } else if (state.controlView === ControlView.NONE) {
+    state.frames = <IFrameOptions[]>frameList;
+  }
 }
 
-function selectFrames(indexes: number[]) {
-  state.currentFrames = indexes.map(index => state.frames[index]);
+function selectFrames(names: string[]) {
+  showFrames(names);
 }
 
-function selectFrame(index: number) {
-  selectFrames([index]);
+function selectFrame(name: string) {
+  selectFrames([name]);
 }
 
 function editFrame(index: number) {
   state.editableFrameIndex = index;
   state.editableFrame = state.frames[index];
-  state.currentFrames = [state.frames[index]];
+  state.visibleFrames = [state.frames[index]];
 }
 
 function updateFrame(updatedFrame: IFrameOptions) {
   state.editableFrame = updatedFrame;
-  state.currentFrames = [updatedFrame];
+  state.visibleFrames = [updatedFrame];
 }
 
 function saveFrame(updatedFrame: IFrameOptions) {
@@ -129,21 +144,26 @@ function cancelFrameEditing() {
 }
 
 
-function addAnimation(name: string, frameIndexes: number[]) {
+function addAnimation(name: string, frameNames: string[]) {
   if (state.animations.find((animation) => animation.name === name)) {
     state.errorMsg = strings.animationNameError;
   } else {
-    state.animations.push({ name, frameIndexes });
+    state.animations.push({ name, frameNames });
   }
 }
 
 function updateAnimations(animations: IListItem[]) {
   state.animations = <IAnimation[]>animations;
-  state.currentFrames = [];
+  showFrames([]);
 }
 
-function selectAnimation(index: number) {
-  state.currentFrames = state.animations[index].frameIndexes.map(fIdx => state.frames[fIdx]);
+function selectAnimation(name: string) {
+  const animation = state.animations.find(anim => anim.name === name);
+  showFrames(animation?.frameNames || []);
+}
+
+function showFrames(names: string[]) {
+  state.visibleFrames = state.frames.filter(frame => names.includes(frame.name));
 }
 </script>
 
@@ -160,7 +180,7 @@ function selectAnimation(index: number) {
       v-if="state.image"
       :frames="state.frames"
       :controlView="state.controlView"
-      @show-control-view="showControlView"
+      @show-control-view="changeControlView"
       @update-frames-form="updateData"
       @add-frames="addFrames"
       @select-frames="selectFrames"
@@ -214,8 +234,9 @@ function selectAnimation(index: number) {
     <FrameCanvas
       :img-width="size.width"
       :img-height="size.height"
-      :frames="state.currentFrames"
+      :frames="state.visibleFrames"
       :scale="state.scale"
+      @update-frames="updateFrames"
     />
   </div>
 </template>

@@ -17,7 +17,8 @@ export function buildFrames(
         width: frameSize.width,
         height: frameSize.height,
         name: `${frameName}_${r * framesInRow + i}`,
-      }
+        selected: false
+      };
       frames.push(frame);
     }
   }
@@ -61,7 +62,7 @@ export function createJson(
   });
 
   animations.forEach((animation) => {
-    result.animations[animation.name] = animation.frameIndexes.map((index) => frames[index]?.name);
+    result.animations[animation.name] = animation.frameNames;
   });
 
   const fileNameParts = fileName.split(".");

@@ -8,14 +8,14 @@ defineProps<{
 }>();
 
 const emit = defineEmits<{
-  (e: "selectFrames", frameIndexes: number[]): void,
-  (e: "addAnimation", name: string, frameIndexes: number[]): void,
+  (e: "selectFrames", frameNames: string[]): void,
+  (e: "addAnimation", name: string, frameNames: string[]): void,
   (e: "cancel"): void,
 }>();
 
 const state = reactive({
   animationName: "animation",
-  frameIndexes: <number[]>[],
+  frameNames: <string[]>[],
 });
 
 const availableList = ref<HTMLSelectElement | null>(null);
@@ -23,21 +23,23 @@ const selectedList = ref<HTMLSelectElement | null>(null);
 
 function selectFrames() {
   const newSelected = Array.from((availableList.value as HTMLSelectElement).selectedOptions);
-  state.frameIndexes.push(...newSelected.map(item => Number(item.value)));
+  state.frameNames.push(...newSelected.map(item => item.value));
   
-  emit("selectFrames", state.frameIndexes);
+  emit("selectFrames", state.frameNames);
 }
 
 function unselectFrames() {
   const newSelected = Array.from((selectedList.value as HTMLSelectElement).selectedOptions);
-  newSelected.map(item => Number(item.value))
-    .forEach(index => state.frameIndexes.splice(index, 1));
+  newSelected.map(item => item.value).forEach(selectedName => {
+    const index = state.frameNames.findIndex(itemName => itemName === selectedName);
+    state.frameNames.splice(index, 1);
+  });
   
-  emit("selectFrames", state.frameIndexes);
+  emit("selectFrames", state.frameNames);
 }
 
 function addAnimation() {
-  emit("addAnimation", state.animationName, state.frameIndexes);
+  emit("addAnimation", state.animationName, state.frameNames);
 }
 
 function cancel() {
@@ -57,7 +59,7 @@ function cancel() {
         <div class="frame-list__name">Available frames:</div>
         <div class="frame-list__list">
           <select ref="availableList" name="" id="" multiple>
-            <option v-for="(frame, index) in frames" :value="index">
+            <option v-for="frame in frames" :value="frame.name">
               {{ frame.name }}
             </option>
           </select>
@@ -71,8 +73,8 @@ function cancel() {
         <div class="frame-list__name">Selected frames:</div>
         <div class="frame-list__list">
           <select ref="selectedList" name="" id="" multiple>
-            <option v-for="(frameIndex, index) in state.frameIndexes" :value="index">
-              {{ frames[frameIndex].name }}
+            <option v-for="name in state.frameNames" :value="name">
+              {{ name }}
             </option>
           </select>
         </div>

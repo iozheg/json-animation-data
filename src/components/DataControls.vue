@@ -13,8 +13,8 @@ const emit = defineEmits<{
   (e: "showControlView", view: ControlView): void,
   (e: "updateFramesForm", controls: IFramesForm): void,
   (e: "addFrames"): void,
-  (e: "selectFrames", frameIndexes: number[]): void,
-  (e: "addAnimation", name: string, frameIndexes: number[]): void,
+  (e: "selectFrames", frameNames: string[]): void,
+  (e: "addAnimation", name: string, frameNames: string[]): void,
 }>();
 
 function createFrames() {
@@ -38,12 +38,12 @@ function cancel() {
   emit("showControlView", ControlView.NONE);
 }
 
-function selectAnimationFrames(frameIndexes: number[]) {
-  emit("selectFrames", frameIndexes);
+function selectAnimationFrames(frameNames: string[]) {
+  emit("selectFrames", frameNames);
 }
 
-function addAnimation(name: string, frameIndexes: number[]) {
-  emit("addAnimation", name, frameIndexes);
+function addAnimation(name: string, frameNames: string[]) {
+  emit("addAnimation", name, frameNames);
   emit("showControlView", ControlView.NONE);
 }
 </script>

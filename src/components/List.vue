@@ -10,7 +10,7 @@ const props = defineProps<{
 
 const emit = defineEmits<{
   (e: "updateList", list: IListItem[]): void;
-  (e: "selectItem", index: number): void;
+  (e: "selectItem", name: string): void;
   (e: "editItem", index: number): void;
 }>();
 
@@ -20,7 +20,7 @@ const state = reactive({
 
 function selectItem(index: number) {
   state.selectedItem = index;
-  emit("selectItem", index);
+  emit("selectItem", props.items[index].name);
 }
 
 function editItem(index: number) {

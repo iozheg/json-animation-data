@@ -27,10 +27,11 @@ export interface IFrameOptions extends IListItem {
   y: number;
   width: number;
   height: number;
+  selected: boolean;
 }
 
 export interface IAnimation extends IListItem {
-  frameIndexes: number[];
+  frameNames: string[];
 }
 
 export interface IListTabs {

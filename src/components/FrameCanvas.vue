@@ -46,12 +46,13 @@ function drawFrames() {
   if (context) {
     context.clearRect(0, 0, props.imgWidth, props.imgHeight);
     context.lineWidth = 1;
-    state.scaledFrames = props.frames.map(({ x, y, width, height, name }) => ({
+    state.scaledFrames = props.frames.map(({ x, y, width, height, name, selected }) => ({
         name,
         x: x * props.scale,
         y: y * props.scale,
         width: width * props.scale,
         height: height * props.scale,
+        selected
     }));
 
     drawScaledFrames();
@@ -161,6 +162,7 @@ function mouseUpHandler() {
         y: state.hoveredFrame.y / props.scale,
         width: state.hoveredFrame.width / props.scale,
         height: state.hoveredFrame.height / props.scale,
+        selected: true
     };
 
     emit("updateFrames", updatedList);
