@@ -8,7 +8,7 @@ import ListTabs from "./components/ListTabs.vue";
 import List from "./components/List.vue";
 import EditFrameForm from "./components/EditFrameForm.vue";
 import Information from "./components/Information.vue";
-import type { IFramesForm, IFrameOptions, IAnimation, IListTabs, IListItem } from "./types";
+import type { IFramesForm, IFrameOptions, IAnimation, IListTabs } from "./types";
 import { ControlView, ListType } from "./enums";
 import { buildFrames, createJson } from "./logic";
 import strings from "./strings";
@@ -66,6 +66,7 @@ function reset() {
   state.editableFrameIndex = -1;
   state.editableFrame = null;
   state.selectedFrameNames = [];
+  state.errorMsg = "";
 
   switch (state.controlView) {
     case ControlView.NONE:
@@ -106,8 +107,15 @@ function exportData() {
 }
 
 function addFrames() {
-  state.frames.push(...state.visibleFrames);
-  state.visibleFrames = [...state.frames];
+  const newFrameNames = state.visibleFrames.map(({ name }) => name);
+  const dublicate = state.frames.find(({ name }) => newFrameNames.includes(name));
+  if (dublicate) {
+    state.errorMsg = strings.frameNameError;
+  } else {
+    state.frames.push(...state.visibleFrames);
+    state.visibleFrames = [...state.frames];
+    changeControlView(ControlView.NONE);
+  }
 }
 
 function deleteFrame(name: string) {
@@ -146,6 +154,7 @@ function addAnimation(name: string, frameNames: string[]) {
     state.errorMsg = strings.animationNameError;
   } else {
     state.animations.push({ name, frameNames });
+    changeControlView(ControlView.NONE);
   }
 }
 

@@ -31,7 +31,6 @@ function updateFramesForm(form: IFramesForm) {
 
 function addFrames() {
   emit("addFrames");
-  emit("showControlView", ControlView.NONE);
 }
 
 function cancel() {
@@ -44,7 +43,6 @@ function selectAnimationFrames(frameNames: string[]) {
 
 function addAnimation(name: string, frameNames: string[]) {
   emit("addAnimation", name, frameNames);
-  emit("showControlView", ControlView.NONE);
 }
 </script>
 
