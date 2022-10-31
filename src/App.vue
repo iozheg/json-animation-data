@@ -21,6 +21,7 @@ interface IState {
   framesForm: IFramesForm | null;
   errorMsg: string,
   visibleFrames: IFrameOptions[];
+  selectedFrameNames: string[];
   frames: IFrameOptions[];
   animations: IAnimation[];
   editableFrameIndex: number;
@@ -37,6 +38,7 @@ const state = reactive<IState>({
   framesForm: null,
   errorMsg: "",
   visibleFrames: [],
+  selectedFrameNames: [],
   frames: [],
   animations: [],
   editableFrameIndex: -1,
@@ -63,13 +65,9 @@ const showListBlock = computed(() => {
 function reset() {
   state.editableFrameIndex = -1;
   state.editableFrame = null;
-}
+  state.selectedFrameNames = [];
 
-function changeControlView(view: ControlView) {
-  reset();
-  state.controlView = view;
-
-  switch (view) {
+  switch (state.controlView) {
     case ControlView.NONE:
       state.visibleFrames = [...state.frames];
       break;
@@ -80,6 +78,11 @@ function changeControlView(view: ControlView) {
       state.visibleFrames = [];
       break;
   }
+}
+
+function changeControlView(view: ControlView) {
+  state.controlView = view;
+  reset();
 }
 
 function updateData(form: IFramesForm) {
@@ -107,26 +110,20 @@ function addFrames() {
   state.visibleFrames = [...state.frames];
 }
 
-function updateFrames(frameList: IListItem[]) {
-  if (state.controlView === ControlView.CREATE_FRAMES) {
-    state.visibleFrames = <IFrameOptions[]>frameList;
-  } else if (state.controlView === ControlView.NONE) {
-    state.frames = <IFrameOptions[]>frameList;
-  }
-}
-
-function selectFrames(names: string[]) {
-  showFrames(names);
+function deleteFrame(name: string) {
+  const frameIndex = state.frames.findIndex(frame => frame.name === name);
+  state.frames.splice(frameIndex, 1);
+  reset();
 }
 
 function selectFrame(name: string) {
-  selectFrames([name]);
+  state.selectedFrameNames = [name];
 }
 
 function editFrame(index: number) {
   state.editableFrameIndex = index;
   state.editableFrame = state.frames[index];
-  state.visibleFrames = [state.frames[index]];
+  selectFrame(state.frames[index].name);
 }
 
 function updateFrame(updatedFrame: IFrameOptions) {
@@ -152,9 +149,10 @@ function addAnimation(name: string, frameNames: string[]) {
   }
 }
 
-function updateAnimations(animations: IListItem[]) {
-  state.animations = <IAnimation[]>animations;
-  showFrames([]);
+function deleteAnimation(name: string) {
+  const animationIndex = state.animations.findIndex(anim => anim.name === name);
+  state.animations.splice(animationIndex, 1);
+  reset();
 }
 
 function selectAnimation(name: string) {
@@ -164,6 +162,11 @@ function selectAnimation(name: string) {
 
 function showFrames(names: string[]) {
   state.visibleFrames = state.frames.filter(frame => names.includes(frame.name));
+}
+
+function showListTab(listType: ListType) {
+  state.selectedListTab = listType;
+  reset();
 }
 </script>
 
@@ -183,7 +186,7 @@ function showFrames(names: string[]) {
       @show-control-view="changeControlView"
       @update-frames-form="updateData"
       @add-frames="addFrames"
-      @select-frames="selectFrames"
+      @select-frames="showFrames"
       @add-animation="addAnimation"
     />
 
@@ -192,20 +195,20 @@ function showFrames(names: string[]) {
         :tabs="state.listTabs"
         :selected="state.selectedListTab"
         class="list-tabs"
-        @selectTab="state.selectedListTab = $event"
+        @selectTab="showListTab"
       />
       <List
         v-if="state.selectedListTab === ListType.FRAMES"
           :items="state.frames"
           :editable="true"
-          @update-list="updateFrames"
+          @delete-item="deleteFrame"
           @select-item="selectFrame"
           @edit-item="editFrame"
       />
       <List
         v-if="state.selectedListTab === ListType.ANIMATIONS"
           :items="state.animations"
-          @update-list="updateAnimations"
+          @delete-item="deleteAnimation"
           @select-item="selectAnimation"
       />
     </template>
@@ -235,8 +238,8 @@ function showFrames(names: string[]) {
       :img-width="size.width"
       :img-height="size.height"
       :frames="state.visibleFrames"
+      :selectedFrames="state.selectedFrameNames"
       :scale="state.scale"
-      @update-frames="updateFrames"
     />
   </div>
 </template>

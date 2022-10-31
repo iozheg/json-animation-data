@@ -6,6 +6,7 @@ const props = defineProps<{
   imgWidth: number;
   imgHeight: number;
   frames: IFrameOptions[];
+  selectedFrames: string[];
   scale: number;
 }>();
 
@@ -21,6 +22,7 @@ const state = reactive({
 });
 
 const FRAME_COLOR = "rgba(255, 0, 0, 0.7)";
+const FRAME_SELECTED_COLOR = "rgba(0, 255, 0, 0.7)";
 const FRAME_HOVER_COLOR = "rgba(255, 200, 0, 0.7)";
 
 const canvas = ref<HTMLCanvasElement>(null);
@@ -35,6 +37,7 @@ onMounted(() => {
 });
 
 watch(() => props.frames, () => drawFrames());
+watch(() => props.selectedFrames, () => drawFrames());
 watch(() => props.scale, () => {
   nextTick(() => {
     drawFrames();
@@ -63,7 +66,8 @@ function drawFrames() {
 
 function drawScaledFrames() {
   state.scaledFrames.forEach(({ name, x, y, width, height }) => {
-    context.strokeStyle = name === state.hoveredFrame?.name ? FRAME_HOVER_COLOR : FRAME_COLOR;
+    const strokeStyle = props.selectedFrames.includes(name) ? FRAME_SELECTED_COLOR : FRAME_COLOR;
+    context.strokeStyle = name === state.hoveredFrame?.name ? FRAME_HOVER_COLOR : strokeStyle;
     context.strokeRect(x, y, width, height);
   });
 }
@@ -101,7 +105,7 @@ function mouseMoveHandler(event: MouseEvent) {
 
     if (hoveredFrame?.name !== state.hoveredFrame?.name) {
       if (state.hoveredFrame) {
-        redrawFrame(state.hoveredFrame, FRAME_COLOR);
+        redrawFrame(state.hoveredFrame);
       }
 
       if (hoveredFrame) {
@@ -169,10 +173,15 @@ function mouseUpHandler() {
   }
 }
 
-function redrawFrame(frame: IFrameOptions, color: string) {
+function redrawFrame(frame: IFrameOptions, color?: string) {
   context.clearRect(frame.x, frame.y, frame.width, frame.height);
 
-  context.strokeStyle = color;
+  if (!color) {
+    context.strokeStyle = props.selectedFrames.includes(frame.name)
+      ? FRAME_SELECTED_COLOR : FRAME_COLOR;
+  } else {
+    context.strokeStyle = color;
+  }
   context.strokeRect(frame.x, frame.y, frame.width, frame.height);
 }
 </script>

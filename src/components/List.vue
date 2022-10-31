@@ -9,7 +9,7 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits<{
-  (e: "updateList", list: IListItem[]): void;
+  (e: "deleteItem", name: string): void;
   (e: "selectItem", name: string): void;
   (e: "editItem", index: number): void;
 }>();
@@ -28,9 +28,7 @@ function editItem(index: number) {
 }
 
 function deleteItem(index: number) {
-  const updatedList = [...props.items];
-  updatedList.splice(index, 1);
-  emit("updateList", updatedList);
+  emit("deleteItem", props.items[index].name);
 }
 </script>
 
