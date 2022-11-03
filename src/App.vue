@@ -140,8 +140,14 @@ function updateFrame(updatedFrame: IFrameOptions) {
 }
 
 function saveFrame(updatedFrame: IFrameOptions) {
-  state.frames[state.editableFrameIndex] = updatedFrame;
-  reset();
+  const sameFrame = state.frames[state.editableFrameIndex].name === updatedFrame.name;
+  const dublicate = state.frames.find(({ name }) => name === updatedFrame.name);
+  if (!sameFrame && dublicate) {
+    state.errorMsg = strings.frameNameError;
+  } else {
+    state.frames[state.editableFrameIndex] = updatedFrame;
+    reset();
+  }
 }
 
 function cancelFrameEditing() {
