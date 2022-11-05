@@ -11,7 +11,7 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits<{
-  (e: "updateFrames", frames: IFrameOptions[]): void;
+  (e: "updateFrame", frames: IFrameOptions): void;
 }>();
 
 const state = reactive({
@@ -159,8 +159,7 @@ function dragHandler(x: number, y: number) {
 function mouseUpHandler() {
   state.dragStartPosition = undefined;
   if (state.selectedFrameIndex >= 0 && state.hoveredFrame) {
-    const updatedList = [...props.frames];
-    updatedList[state.selectedFrameIndex] = {
+    const updatedFrame = {
         name: state.hoveredFrame.name,
         x: state.hoveredFrame.x / props.scale,
         y: state.hoveredFrame.y / props.scale,
@@ -169,7 +168,7 @@ function mouseUpHandler() {
         selected: true
     };
 
-    emit("updateFrames", updatedList);
+    emit("updateFrame", updatedFrame);
   }
 }
 

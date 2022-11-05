@@ -18,7 +18,6 @@ interface IState {
   fileName: string,
   scale: number;
   controlView: ControlView;
-  framesForm: IFramesForm | null;
   errorMsg: string,
   visibleFrames: IFrameOptions[];
   selectedFrameNames: string[];
@@ -35,7 +34,6 @@ const state = reactive<IState>({
   fileName: "",
   scale: 2,
   controlView: ControlView.NONE,
-  framesForm: null,
   errorMsg: "",
   visibleFrames: [],
   selectedFrameNames: [],
@@ -86,13 +84,6 @@ function changeControlView(view: ControlView) {
   reset();
 }
 
-function updateData(form: IFramesForm) {
-  state.framesForm = form; //??? remove?? not used
-  if (state.image) {
-    state.visibleFrames = buildFrames(form, state.image.width);
-  }
-}
-
 function setImage(image: HTMLImageElement, name: string) {
   state.image = image,
   state.fileName = name;
@@ -106,6 +97,11 @@ function exportData() {
   createJson(state.frames, state.animations, state.fileName);
 }
 
+function updateData(form: IFramesForm) {
+  if (state.image) {
+    state.visibleFrames = buildFrames(form, state.image.width);
+  }
+}
 function addFrames() {
   const newFrameNames = state.visibleFrames.map(({ name }) => name);
   const dublicate = state.frames.find(({ name }) => newFrameNames.includes(name));
@@ -148,6 +144,14 @@ function saveFrame(updatedFrame: IFrameOptions) {
     state.frames[state.editableFrameIndex] = updatedFrame;
     reset();
   }
+}
+
+function updateFrameFromCanvas(updatedFrame: IFrameOptions) {
+  const index = state.frames.findIndex(({ name }) => name === updatedFrame.name);
+  state.frames.splice(index, 1, updatedFrame);
+
+  const indexVisible = state.visibleFrames.findIndex(({ name }) => name === updatedFrame.name);
+  state.visibleFrames.splice(indexVisible, 1, updatedFrame);
 }
 
 function cancelFrameEditing() {
@@ -255,6 +259,7 @@ function showListTab(listType: ListType) {
       :frames="state.visibleFrames"
       :selectedFrames="state.selectedFrameNames"
       :scale="state.scale"
+      @update-frame="updateFrameFromCanvas"
     />
   </div>
 </template>
