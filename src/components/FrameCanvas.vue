@@ -15,6 +15,7 @@ const props = withDefaults(defineProps<{
 
 const emit = defineEmits<{
   (e: "updateFrame", frames: IFrameOptions): void;
+  (e: "selectFrame", frameName: string): void;
 }>();
 
 const state = reactive({
@@ -176,6 +177,7 @@ function mouseUpHandler() {
     };
 
     emit("updateFrame", updatedFrame);
+    emit("selectFrame", state.hoveredFrame.name);
   }
 }
 

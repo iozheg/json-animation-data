@@ -79,6 +79,10 @@ const visibleFrames = computed(() => {
   return frames;
 });
 
+const selectedFrame = computed(() => {
+  return state.frames.find(frame => state.selectedFrameNames.includes(frame.name));
+});
+
 const isCanvasInteractive = computed(() => {
   return state.controlView !== ControlView.CREATE_FRAMES
     && state.controlView !== ControlView.CREATE_ANIMATION;
@@ -249,6 +253,11 @@ function showListTab(listType: ListType) {
       @save="saveFrame"
       @cancel="cancelFrameEditing"
     />
+    <EditFrameForm
+      v-else-if="selectedFrame"
+      :frame="selectedFrame"
+      :disabled="true"
+    />
     <Information
       v-if="state.errorMsg"
       :text="state.errorMsg"
@@ -271,6 +280,7 @@ function showListTab(listType: ListType) {
       :scale="state.scale"
       :interactive="isCanvasInteractive"
       @update-frame="updateFrameFromCanvas"
+      @select-frame="selectFrame"
     />
   </div>
 </template>
