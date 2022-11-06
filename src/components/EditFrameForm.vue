@@ -4,6 +4,7 @@ import InputControl from "./InputControl.vue";
 
 const props = defineProps<{
   frame: IFrameOptions;
+  disabled?: boolean;
 }>();
 
 const emit = defineEmits<{
@@ -29,36 +30,41 @@ function cancel() {
   <div class="edit-frame-form">
     <InputControl
       :modelValue="frame.name"
+      :disabled="disabled"
       label="Name:"
       @update:modelValue="update('name', $event)"
     />
     <div class="flex-break"></div>
     <InputControl
       :modelValue="frame.x"
+      :disabled="disabled"
       label="x:"
       type="number"
       @update:modelValue="update('x', $event)"
     />
     <InputControl
       :modelValue="frame.y"
+      :disabled="disabled"
       label="y:"
       type="number"
       @update:modelValue="update('y', $event)"
     />
     <InputControl
       :modelValue="frame.width"
+      :disabled="disabled"
       label="Width:"
       type="number"
       @update:modelValue="update('width', $event)"
     />
     <InputControl
       :modelValue="frame.height"
+      :disabled="disabled"
       label="Height:"
       type="number"
       @update:modelValue="update('height', $event)"
     />
     <div class="flex-break"></div>
-    <div class="btn-group">
+    <div v-if="!disabled" class="btn-group">
       <button
         class="btn"
         @click="save">Save</button>

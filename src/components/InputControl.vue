@@ -1,5 +1,5 @@
 <script setup lang="ts">
-defineProps(["modelValue", "label", "type", "placeholder"]);
+defineProps(["modelValue", "label", "type", "placeholder", "disabled"]);
 defineEmits(["update:modelValue"]);
 </script>
 
@@ -12,6 +12,7 @@ defineEmits(["update:modelValue"]);
       :type="type"
       :value="modelValue"
       :placeholder="placeholder"
+      :disabled="disabled"
       @input="$emit('update:modelValue', $event.target?.value)"
     >
   </div>
