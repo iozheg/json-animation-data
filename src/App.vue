@@ -79,6 +79,11 @@ const visibleFrames = computed(() => {
   return frames;
 });
 
+const isCanvasInteractive = computed(() => {
+  return state.controlView !== ControlView.CREATE_FRAMES
+    && state.controlView !== ControlView.CREATE_ANIMATION;
+});
+
 function reset() {
   state.tempFrames = [];
   state.selectedAnimation = null;
@@ -264,6 +269,7 @@ function showListTab(listType: ListType) {
       :frames="visibleFrames"
       :selectedFrames="state.selectedFrameNames"
       :scale="state.scale"
+      :interactive="isCanvasInteractive"
       @update-frame="updateFrameFromCanvas"
     />
   </div>

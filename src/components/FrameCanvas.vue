@@ -2,13 +2,16 @@
 import type { IFrameOptions } from "@/types";
 import { onMounted, reactive, ref, watch, nextTick } from "vue";
 
-const props = defineProps<{
+const props = withDefaults(defineProps<{
   imgWidth: number;
   imgHeight: number;
   frames: IFrameOptions[];
   selectedFrames: string[];
   scale: number;
-}>();
+  interactive?: boolean;
+}>(), {
+  interactive: true
+});
 
 const emit = defineEmits<{
   (e: "updateFrame", frames: IFrameOptions): void;
@@ -92,6 +95,10 @@ function drawGrid(step = 1) {
 }
 
 function mouseMoveHandler(event: MouseEvent) {
+  if (!props.interactive) {
+    return;
+  }
+
   const mx = event.offsetX;
   const my = event.offsetY;
 
@@ -172,6 +179,15 @@ function mouseUpHandler() {
   }
 }
 
+function mouseLeaveHandler() {
+  if (state.hoveredFrame) {
+    redrawFrame(state.hoveredFrame, FRAME_COLOR);
+  }
+  state.dragStartPosition = undefined;
+  state.hoveredFrame = undefined;
+  document.body.style.cursor = "unset";
+}
+
 function redrawFrame(frame: IFrameOptions, color?: string) {
   context.clearRect(frame.x, frame.y, frame.width, frame.height);
 
@@ -198,6 +214,7 @@ function redrawFrame(frame: IFrameOptions, color?: string) {
     @mousemove="mouseMoveHandler"
     @mousedown="mouseDownHandler"
     @mouseup="mouseUpHandler"
+    @mouseleave="mouseLeaveHandler"
   ></canvas>
 </template>
 
