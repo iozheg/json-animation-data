@@ -19,10 +19,11 @@ interface IState {
   scale: number;
   controlView: ControlView;
   errorMsg: string,
-  visibleFrames: IFrameOptions[];
+  tempFrames: IFrameOptions[];
   selectedFrameNames: string[];
   frames: IFrameOptions[];
   animations: IAnimation[];
+  selectedAnimation: IAnimation | null;
   editableFrameIndex: number;
   editableFrame: IFrameOptions | null;
   listTabs: IListTabs[];
@@ -35,10 +36,11 @@ const state = reactive<IState>({
   scale: 2,
   controlView: ControlView.NONE,
   errorMsg: "",
-  visibleFrames: [],
+  tempFrames: [],
   selectedFrameNames: [],
   frames: [],
   animations: [],
+  selectedAnimation: null,
   editableFrameIndex: -1,
   editableFrame: null,
   listTabs: [
@@ -60,23 +62,30 @@ const showListBlock = computed(() => {
     && (state.frames.length || state.animations.length);
 });
 
+const visibleFrames = computed(() => {
+  let frames: IFrameOptions[] = [];
+  if (state.tempFrames.length || state.controlView === ControlView.CREATE_ANIMATION) {
+    frames = [...state.tempFrames];
+  } else if (state.selectedAnimation) {
+    const names = state.selectedAnimation.frameNames;
+    frames = [...state.frames.filter(frame => names.includes(frame.name))];
+  } else {
+    frames = state.frames.map(frame => frame.name === state.editableFrame?.name
+      ? state.editableFrame
+      : frame
+    );
+  }
+
+  return frames;
+});
+
 function reset() {
+  state.tempFrames = [];
+  state.selectedAnimation = null;
   state.editableFrameIndex = -1;
   state.editableFrame = null;
   state.selectedFrameNames = [];
   state.errorMsg = "";
-
-  switch (state.controlView) {
-    case ControlView.NONE:
-      state.visibleFrames = [...state.frames];
-      break;
-    case ControlView.CREATE_FRAMES:
-      state.visibleFrames = [];
-      break;
-    case ControlView.CREATE_ANIMATION:
-      state.visibleFrames = [];
-      break;
-  }
 }
 
 function changeControlView(view: ControlView) {
@@ -99,17 +108,16 @@ function exportData() {
 
 function updateData(form: IFramesForm) {
   if (state.image) {
-    state.visibleFrames = buildFrames(form, state.image.width);
+    state.tempFrames = buildFrames(form, state.image.width);
   }
 }
 function addFrames() {
-  const newFrameNames = state.visibleFrames.map(({ name }) => name);
+  const newFrameNames = state.tempFrames.map(({ name }) => name);
   const dublicate = state.frames.find(({ name }) => newFrameNames.includes(name));
   if (dublicate) {
     state.errorMsg = strings.frameNameError;
   } else {
-    state.frames.push(...state.visibleFrames);
-    state.visibleFrames = [...state.frames];
+    state.frames.push(...state.tempFrames);
     changeControlView(ControlView.NONE);
   }
 }
@@ -132,7 +140,6 @@ function editFrame(index: number) {
 
 function updateFrame(updatedFrame: IFrameOptions) {
   state.editableFrame = updatedFrame;
-  state.visibleFrames = [updatedFrame];
 }
 
 function saveFrame(updatedFrame: IFrameOptions) {
@@ -149,15 +156,15 @@ function saveFrame(updatedFrame: IFrameOptions) {
 function updateFrameFromCanvas(updatedFrame: IFrameOptions) {
   const index = state.frames.findIndex(({ name }) => name === updatedFrame.name);
   state.frames.splice(index, 1, updatedFrame);
-
-  const indexVisible = state.visibleFrames.findIndex(({ name }) => name === updatedFrame.name);
-  state.visibleFrames.splice(indexVisible, 1, updatedFrame);
 }
 
 function cancelFrameEditing() {
   reset();
 }
 
+function selectFramesForAnimation(names: string[]) {
+  state.tempFrames = [...state.frames.filter(frame => names.includes(frame.name))];
+}
 
 function addAnimation(name: string, frameNames: string[]) {
   if (state.animations.find((animation) => animation.name === name)) {
@@ -176,11 +183,9 @@ function deleteAnimation(name: string) {
 
 function selectAnimation(name: string) {
   const animation = state.animations.find(anim => anim.name === name);
-  showFrames(animation?.frameNames || []);
-}
-
-function showFrames(names: string[]) {
-  state.visibleFrames = state.frames.filter(frame => names.includes(frame.name));
+  if (animation) {
+    state.selectedAnimation = animation;
+  }
 }
 
 function showListTab(listType: ListType) {
@@ -205,7 +210,7 @@ function showListTab(listType: ListType) {
       @show-control-view="changeControlView"
       @update-frames-form="updateData"
       @add-frames="addFrames"
-      @select-frames="showFrames"
+      @select-frames="selectFramesForAnimation"
       @add-animation="addAnimation"
     />
 
@@ -256,7 +261,7 @@ function showListTab(listType: ListType) {
     <FrameCanvas
       :img-width="size.width"
       :img-height="size.height"
-      :frames="state.visibleFrames"
+      :frames="visibleFrames"
       :selectedFrames="state.selectedFrameNames"
       :scale="state.scale"
       @update-frame="updateFrameFromCanvas"
