@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { IFrameOptions } from "@/types";
+import type { IFrameOptions, IPoint } from "@/types";
 import { onMounted, reactive, ref, watch, nextTick } from "vue";
 
 const props = withDefaults(defineProps<{
@@ -141,13 +141,16 @@ function dragHandler(x: number, y: number) {
   if (state.hoveredFrame) {
     const startPosition = {
       x: state.dragStartPosition?.x || 0,
-      y:state.dragStartPosition?.y || 0,
+      y: state.dragStartPosition?.y || 0,
     };
 
-    const offset = {
+    /** Offset in real non-scaled pixels. */
+    let offset: IPoint = {
       x: Math.trunc((x - startPosition.x) / props.scale),
       y: Math.trunc((y - startPosition.y) / props.scale),
     };
+
+    offset = checkBoundaries(offset, state.hoveredFrame);
 
     if (offset.x || offset.y) {
       state.hoveredFrame.x += offset.x * props.scale;
@@ -201,6 +204,24 @@ function redrawFrame(frame: IFrameOptions, color?: string) {
   }
   context.strokeRect(frame.x, frame.y, frame.width, frame.height);
 }
+
+/** Prevents going out of image boundaries. */
+function checkBoundaries(offset: IPoint, hoveredFrame: IFrameOptions): IPoint {
+  const x0 = hoveredFrame.x + offset.x * props.scale;
+  const y0 = hoveredFrame.y + offset.y * props.scale;
+  const x1 = x0 + hoveredFrame.width;
+  const y1 = y0 + hoveredFrame.height;
+
+  const fixedOffset = { ...offset };
+  if (x0 < 0 || x1 > props.imgWidth) {
+    fixedOffset.x = 0;
+  }
+  if (y0 < 0 || y1 > props.imgHeight) {
+    fixedOffset.y = 0;
+  }
+
+  return fixedOffset;
+}
 </script>
 
 <template>
@@ -214,7 +235,7 @@ function redrawFrame(frame: IFrameOptions, color?: string) {
     :width="imgWidth"
     :height="imgHeight"
     @mousemove="mouseMoveHandler"
-    @mousedown="mouseDownHandler"
+    @mousedown.prevent="mouseDownHandler"
     @mouseup="mouseUpHandler"
     @mouseleave="mouseLeaveHandler"
   ></canvas>

@@ -1,5 +1,10 @@
 import type { ListType } from "./enums";
 
+export interface IPoint {
+  x: number;
+  y: number;
+}
+
 export interface IFramesForm {
   amount: number;
   startOffset: {
