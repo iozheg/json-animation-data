@@ -17,6 +17,7 @@ interface IState {
   image: HTMLImageElement | null;
   fileName: string,
   scale: number;
+  showGrid: boolean;
   controlView: ControlView;
   errorMsg: string,
   tempFrames: IFrameOptions[];
@@ -34,6 +35,7 @@ const state = reactive<IState>({
   image: null,
   fileName: "",
   scale: 2,
+  showGrid: true,
   controlView: ControlView.NONE,
   errorMsg: "",
   tempFrames: [],
@@ -208,8 +210,10 @@ function showListTab(listType: ListType) {
     <GeneralControls
       :scale="state.scale"
       :readyToExport="!!state.frames.length"
+      :show-grid="state.showGrid"
       @image-loaded="setImage"
       @update-scale="updateScale"
+      @toggle-grid="state.showGrid = $event"
       @export-json="exportData"
     />
     <DataControls
@@ -278,6 +282,7 @@ function showListTab(listType: ListType) {
       :frames="visibleFrames"
       :selectedFrames="state.selectedFrameNames"
       :scale="state.scale"
+      :show-grid="state.showGrid"
       :interactive="isCanvasInteractive"
       @update-frame="updateFrameFromCanvas"
       @select-frame="selectFrame"

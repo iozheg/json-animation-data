@@ -8,6 +8,7 @@ const props = withDefaults(defineProps<{
   frames: IFrameOptions[];
   selectedFrames: string[];
   scale: number;
+  showGrid: boolean;
   interactive?: boolean;
 }>(), {
   interactive: true
@@ -48,6 +49,11 @@ watch(() => props.scale, () => {
     drawGrid();
   });
 });
+watch(() => props.showGrid, () => {
+  nextTick(() => {
+    drawGrid();
+  });
+});
 
 function drawFrames() {
   if (context) {
@@ -78,20 +84,22 @@ function drawScaledFrames() {
 
 function drawGrid(step = 1) {
   gridCanvasContext.clearRect(0, 0, props.imgWidth, props.imgHeight);
-  gridCanvasContext.strokeStyle = "rgba(0, 0, 0, 0.3)";
+  if (props.showGrid) {
+    gridCanvasContext.strokeStyle = "rgba(0, 0, 0, 0.3)";
 
-  for (let i = 0; i < props.imgWidth; i += step * props.scale) {
-    gridCanvasContext.beginPath();
-    gridCanvasContext.moveTo(i, 0);
-    gridCanvasContext.lineTo(i, props.imgHeight);
-    gridCanvasContext.stroke();
-  }
+    for (let i = 0; i < props.imgWidth; i += step * props.scale) {
+      gridCanvasContext.beginPath();
+      gridCanvasContext.moveTo(i, 0);
+      gridCanvasContext.lineTo(i, props.imgHeight);
+      gridCanvasContext.stroke();
+    }
 
-  for (let i = 0; i < props.imgHeight; i += step * props.scale) {
-    gridCanvasContext.beginPath();
-    gridCanvasContext.moveTo(0, i);
-    gridCanvasContext.lineTo(props.imgWidth, i);
-    gridCanvasContext.stroke();
+    for (let i = 0; i < props.imgHeight; i += step * props.scale) {
+      gridCanvasContext.beginPath();
+      gridCanvasContext.moveTo(0, i);
+      gridCanvasContext.lineTo(props.imgWidth, i);
+      gridCanvasContext.stroke();
+    }
   }
 }
 
