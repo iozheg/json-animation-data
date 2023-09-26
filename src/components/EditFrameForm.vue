@@ -66,7 +66,7 @@ function cancel() {
     <div class="flex-break"></div>
     <div v-if="!disabled" class="btn-group">
       <button
-        class="btn"
+        class="btn save-button"
         @click="save">Save</button>
       <button
         class="btn"
@@ -84,5 +84,9 @@ function cancel() {
     padding: 6px 0;
     border-top: 1px solid var(--color-accent);
     background-color: var(--color-bkgnd-component);
+  }
+
+  .save-button {
+    background-color: var(--color-accent);
   }
 </style>
