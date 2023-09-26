@@ -25,6 +25,7 @@ defineEmits(["update:modelValue"]);
 
   .input-control label {
     padding-left: 2px;
+    padding-bottom: 3px;
     color: var(--text-gray);
   }
 </style>

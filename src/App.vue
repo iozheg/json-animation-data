@@ -35,7 +35,7 @@ const state = reactive<IState>({
   image: null,
   fileName: "",
   scale: 2,
-  showGrid: true,
+  showGrid: false,
   controlView: ControlView.NONE,
   errorMsg: "",
   tempFrames: [],
@@ -302,6 +302,8 @@ function showListTab(listType: ListType) {
 }
 
 .image-wrapper {
+  height: 90vh;
+  overflow: auto;
   padding-top: 30px;
 }
 

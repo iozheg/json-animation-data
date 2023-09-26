@@ -89,6 +89,7 @@ function exportJson() {
   }
 
   .general-controls .export-btn {
+    width: 150px;
     margin: 10px 0;
   }
 
