@@ -3,13 +3,11 @@ import type { IListItem } from "@/types";
 
 defineProps<{
   item: IListItem;
-  editable: boolean;
   selected: boolean;
 }>();
 
 const emit = defineEmits<{
   (e: "select"): void;
-  (e: "edit"): void;
   (e: "delete"): void;
 }>();
 </script>
@@ -19,11 +17,6 @@ const emit = defineEmits<{
     <div class="list-item__name" @click="emit('select')">
       {{ item.name }}
     </div>
-    <button
-      v-if="editable"
-      class="btn list-item__change"
-      @click="emit('edit')"
-    >Edit</button>
     <button
       class="btn list-item__delete"
       @click="emit('delete')"

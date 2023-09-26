@@ -141,12 +141,9 @@ function deleteFrame(name: string) {
 
 function selectFrame(name: string) {
   state.selectedFrameNames = [name];
-}
-
-function editFrame(index: number) {
-  state.editableFrameIndex = index;
-  state.editableFrame = state.frames[index];
-  selectFrame(state.frames[index].name);
+  const selectedFrameIndex = state.frames.findIndex(frame => frame.name === name);
+  state.editableFrame = state.frames[selectedFrameIndex];
+  state.editableFrameIndex = selectedFrameIndex;
 }
 
 function updateFrame(updatedFrame: IFrameOptions) {
@@ -237,10 +234,8 @@ function showListTab(listType: ListType) {
       <List
         v-if="state.selectedListTab === ListType.FRAMES"
           :items="state.frames"
-          :editable="true"
           @delete-item="deleteFrame"
           @select-item="selectFrame"
-          @edit-item="editFrame"
       />
       <List
         v-if="state.selectedListTab === ListType.ANIMATIONS"
@@ -256,11 +251,6 @@ function showListTab(listType: ListType) {
       @update="updateFrame"
       @save="saveFrame"
       @cancel="cancelFrameEditing"
-    />
-    <EditFrameForm
-      v-else-if="selectedFrame"
-      :frame="selectedFrame"
-      :disabled="true"
     />
     <Information
       v-if="state.errorMsg"

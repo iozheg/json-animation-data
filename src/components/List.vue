@@ -5,13 +5,11 @@ import ListItem from "./ListItem.vue";
 
 const props = defineProps<{
   items: IListItem[];
-  editable?: boolean;
 }>();
 
 const emit = defineEmits<{
   (e: "deleteItem", name: string): void;
   (e: "selectItem", name: string): void;
-  (e: "editItem", index: number): void;
 }>();
 
 const state = reactive({
@@ -21,10 +19,6 @@ const state = reactive({
 function selectItem(index: number) {
   state.selectedItem = index;
   emit("selectItem", props.items[index].name);
-}
-
-function editItem(index: number) {
-  emit("editItem", index);
 }
 
 function deleteItem(index: number) {
@@ -37,10 +31,8 @@ function deleteItem(index: number) {
     <ListItem
       v-for="(item, index) in items"
       :item="item"
-      :editable="!!editable"
       :selected="index === state.selectedItem"
       @select="selectItem(index)"
-      @edit="editItem(index)"
       @delete="deleteItem(index)"
     />
   </div>
